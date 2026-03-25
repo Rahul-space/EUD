@@ -1,0 +1,56 @@
+# ══════════════════════════════════════════════════════════════
+#  SysAssist AI  v2.3.0  —  Requirements
+#  LOCAL Agentic AI · AutoGen v0.4 · Ollama only
+# ══════════════════════════════════════════════════════════════
+
+# ── Web framework ────────────────────────────────────────────
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+h11==0.14.0
+websockets==14.1
+wsproto==1.2.0
+
+# ── System monitoring ────────────────────────────────────────
+psutil==6.1.0
+
+# ── Data validation ──────────────────────────────────────────
+pydantic==2.10.3
+
+# ── Encrypted storage ────────────────────────────────────────
+cryptography==43.0.3
+
+# ── Desktop notifications ────────────────────────────────────
+plyer==2.1.0
+
+# ── System tray ──────────────────────────────────────────────
+pystray==0.19.5
+Pillow==11.0.0
+
+# ── Windows Service ──────────────────────────────────────────
+pywin32==308; sys_platform == "win32"
+
+# ── Build ─────────────────────────────────────────────────────
+pyinstaller==6.11.1
+
+# ── Agentic AI — AutoGen v0.4 (LOCAL ONLY via Ollama) ────────
+#
+#  autogen-agentchat  → AssistantAgent, RoundRobinGroupChat,
+#                        TextMentionTermination, etc.
+#  autogen-ext[openai]→ OpenAIChatCompletionClient (used for
+#                        Ollama's OpenAI-compatible endpoint)
+#
+#  DO NOT add openai, anthropic, or other cloud SDK packages.
+#  This application is local-only. Ollama provides all LLM inference.
+#
+#  Install Ollama first: https://ollama.com
+#  Then: ollama pull llama3.2   (or phi3, mistral, etc.)
+#
+autogen-agentchat>=0.4.0
+autogen-ext[openai]>=0.4.0
+
+# ── NOTES ─────────────────────────────────────────────────────
+# After installing pywin32 on Windows:
+#   python -m pywin32_postinstall -install
+#
+# Full install command:
+#   pip install -r requirements.txt
