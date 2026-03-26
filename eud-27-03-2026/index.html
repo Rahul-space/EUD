@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cognix EUD AI Assist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080a0e;--bg-s:#0d0f14;--bg-c:#111418;--bg-h:#161a21;--bg-i:#0f1217;--bg-m:#13161e;
+  --b:rgba(255,255,255,.06);--bm:rgba(255,255,255,.10);--ba:rgba(0,212,160,.4);
+  --a:#00d4a0;--ad:rgba(0,212,160,.12);--ag:rgba(0,212,160,.07);
+  --a2:#6d70ff;--a2d:rgba(109,112,255,.12);
+  --w:#f59e0b;--wd:rgba(245,158,11,.12);
+  --r:#ef4444;--rd:rgba(239,68,68,.12);
+  --i:#38bdf8;--id:rgba(56,189,248,.12);
+  --t:#e8eaf0;--ts:#7a8094;--tm:#3d4255;
+  --ff:'Syne',sans-serif;--fm:'JetBrains Mono',monospace;
+  --r4:4px;--r6:6px;--r10:10px;--r16:16px;--tr:.17s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--ff);background:var(--bg);color:var(--t);display:flex;height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.14)}
+
+/* ── SIDEBAR ── */
+.sb{width:196px;min-width:196px;background:var(--bg-s);border-right:1px solid var(--b);display:flex;flex-direction:column;transition:width var(--tr);z-index:10}
+.sb.col{width:50px;min-width:50px}
+.sb-logo{height:52px;display:flex;align-items:center;gap:9px;padding:0 12px;border-bottom:1px solid var(--b);overflow:hidden;flex-shrink:0}
+.lo-ic{width:28px;height:28px;background:linear-gradient(135deg,var(--a),var(--a2));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,212,160,.2)}
+.lo-tx{display:flex;flex-direction:column;overflow:hidden;white-space:nowrap}
+.lo-nm{font-size:11px;font-weight:800;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lo-sb{font-size:9px;color:var(--ts);letter-spacing:.05em;font-family:var(--fm)}
+.sb-nav{flex:1;padding:7px 6px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;overflow-x:hidden}
+.nl{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tm);padding:9px 8px 3px;white-space:nowrap;overflow:hidden}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r6);cursor:pointer;transition:all var(--tr);position:relative;overflow:hidden;white-space:nowrap;min-height:32px}
+.ni:hover{background:rgba(255,255,255,.04)}
+.ni.on{background:var(--ad);color:var(--a)}
+.ni.on::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:2px;background:var(--a);border-radius:0 2px 2px 0}
+.ni-ic{font-size:13px;flex-shrink:0;width:17px;text-align:center}
+.ni-tx{font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.nbadge{margin-left:auto;min-width:17px;height:17px;border:1px solid var(--b);background:var(--bg-c);color:var(--ts);border-radius:8px;font-size:9px;font-family:var(--fm);display:flex;align-items:center;justify-content:center;padding:0 4px;flex-shrink:0}
+.nbadge.red{background:var(--rd);color:var(--r);border-color:rgba(239,68,68,.3)}
+.nbadge.amb{background:var(--wd);color:var(--w);border-color:rgba(245,158,11,.3)}
+.sb-ft{padding:9px 8px;border-top:1px solid var(--b);overflow:hidden}
+.hbox{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:9px 11px;display:flex;flex-direction:column;gap:4px}
+.hrow{display:flex;align-items:center;gap:6px}
+.hd{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+.hd.ok{background:var(--a);box-shadow:0 0 5px var(--a)}.hd.w{background:var(--w);box-shadow:0 0 5px var(--w)}.hd.d{background:var(--r);box-shadow:0 0 5px var(--r)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hlb{font-size:11px;font-weight:700;white-space:nowrap;flex:1;overflow:hidden;text-overflow:ellipsis}
+.hsc{font-size:10px;font-family:var(--fm);color:var(--ts);white-space:nowrap}
+.hbar{height:3px;background:var(--b);border-radius:2px;overflow:hidden;margin-top:2px}
+.hbar-f{height:100%;border-radius:2px;transition:width .8s ease}
+.col-btn{display:flex;align-items:center;gap:7px;padding:5px 9px;margin-top:7px;border-radius:var(--r6);cursor:pointer;color:var(--ts);font-size:11px;transition:all var(--tr)}
+.col-btn:hover{color:var(--t);background:rgba(255,255,255,.04)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.tb{height:52px;border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 18px 0 20px;gap:10px;flex-shrink:0;background:var(--bg-s)}
+.tb-title{font-size:14px;font-weight:700;white-space:nowrap}
+.tb-sub{font-size:10px;color:var(--tm);font-family:var(--fm);white-space:nowrap;margin-left:4px}
+.tb-sp{flex:1}
+.ai-wrap{display:flex;align-items:center;gap:5px}
+.ai-lbl{font-size:9px;color:var(--tm);font-family:var(--fm);letter-spacing:.04em}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--tm);transition:all .3s}
+.ai-dot.ok{background:var(--a);box-shadow:0 0 5px var(--a)}
+.ai-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--b);background:var(--bg-c);border-radius:var(--r6);cursor:pointer;font-size:11px;color:var(--ts);font-family:var(--ff);transition:all var(--tr);max-width:178px;overflow:hidden}
+.ai-btn:hover{border-color:var(--ba);color:var(--a);background:var(--ag)}
+.ch{opacity:.4;font-size:9px;margin-left:auto;flex-shrink:0}
+.dev-w{display:flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid var(--b);background:var(--bg-c);border-radius:var(--r6);cursor:pointer;transition:all var(--tr);max-width:178px}
+.dev-w:hover{border-color:rgba(0,212,160,.3);background:var(--bg-h)}
+.dev-ic{width:22px;height:22px;border-radius:5px;background:var(--ad);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.dev-inf{display:flex;flex-direction:column;overflow:hidden}
+.dev-nm{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dev-sp{font-size:9px;color:var(--ts);font-family:var(--fm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ic-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:var(--r6);cursor:pointer;color:var(--ts);font-size:13px;transition:all var(--tr);position:relative}
+.ic-btn:hover{background:rgba(255,255,255,.06);color:var(--t)}
+.apip{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--r);border:1.5px solid var(--bg-s);display:none}
+.apip.on{display:block}
+.bvio{display:none;padding:5px 20px;font-size:11px;align-items:center;gap:8px;background:linear-gradient(90deg,rgba(239,68,68,.07),transparent);border-bottom:1px solid rgba(239,68,68,.12);color:var(--r)}
+.bvio.on{display:flex}
+
+/* ── CONTENT AREA ── */
+.ca{flex:1;overflow:hidden;position:relative}
+.pnl{display:none;position:absolute;inset:0;flex-direction:column;overflow:hidden}
+.pnl.on{display:flex}
+
+/* PANEL TOOLBAR */
+.ptb{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--b);flex-shrink:0;min-height:46px}
+.ptb-grp{display:flex;align-items:center;gap:8px}
+.ptb-ic{width:26px;height:26px;border:1px solid var(--b);border-radius:var(--r6);display:flex;align-items:center;justify-content:center;font-size:12px}
+.ptb-t{font-size:13px;font-weight:700}
+.ptb-s{font-size:10px;color:var(--ts);font-family:var(--fm)}
+.ptb-sp{flex:1}
+.rbtn{width:28px;height:28px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ts);font-size:13px;transition:all var(--tr)}
+.rbtn:hover{color:var(--a);border-color:var(--ba)}
+.srch-w{position:relative}
+.srch-ic{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--tm);pointer-events:none}
+.srch{background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r6);padding:5px 9px 5px 26px;color:var(--t);font-size:11.5px;font-family:var(--ff);outline:none;width:152px;transition:border-color var(--tr)}
+.srch::placeholder{color:var(--tm)}
+.srch:focus{border-color:var(--ba)}
+
+/* ── FLOATING ANALYZE BUTTON (FAB) ── */
+.fab{position:absolute;bottom:22px;right:22px;z-index:50;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--a),var(--a2));
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 18px rgba(0,212,160,.35),0 2px 8px rgba(0,0,0,.4);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow var(--tr);
+  color:var(--bg);}
+.fab:hover{transform:scale(1.12);box-shadow:0 6px 26px rgba(0,212,160,.5),0 3px 10px rgba(0,0,0,.5)}
+.fab:active{transform:scale(.96)}
+.fab.open{background:linear-gradient(135deg,#374151,#1f2937);box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.fab-label{position:absolute;bottom:64px;right:0;
+  background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r6);
+  padding:5px 11px;font-size:11px;font-weight:600;color:var(--ts);
+  white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(4px);
+  transition:all .15s;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.fab:hover .fab-label,.fab:focus .fab-label{opacity:1;transform:translateY(0)}
+
+/* ── PER-TAB ANALYZE CHAT POPUP ── */
+.tab-chat{
+  position:absolute;bottom:86px;right:22px;z-index:60;
+  width:min(440px, calc(100vw - 260px));
+  max-height:min(580px, calc(100vh - 120px));
+  background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r16);
+  box-shadow:0 16px 48px rgba(0,0,0,.65),0 4px 16px rgba(0,0,0,.4);
+  display:flex;flex-direction:column;overflow:hidden;
+  animation:tc-in .22s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-chat.hi{display:none}
+@keyframes tc-in{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+.tc-header{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--b);flex-shrink:0}
+.tc-icon{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tc-title{font-size:13px;font-weight:700;flex:1}
+.tc-sub{font-size:10px;color:var(--ts);font-family:var(--fm)}
+.tc-actions{display:flex;gap:5px}
+.tc-btn{width:26px;height:26px;border-radius:var(--r6);background:var(--bg-c);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ts);font-size:11px;transition:all var(--tr)}
+.tc-btn:hover{color:var(--t);border-color:var(--bm)}
+.tc-btn.danger:hover{color:var(--r);border-color:rgba(239,68,68,.3)}
+.tc-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.tc-msg{display:flex;flex-direction:column;gap:4px;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.tc-msg-header{display:flex;align-items:center;gap:7px}
+.tc-msg-ic{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.tc-msg-from{font-size:10px;font-weight:700;color:var(--ts)}
+.tc-msg-ts{font-size:9px;color:var(--tm);font-family:var(--fm);margin-left:auto}
+.tc-bubble{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);border-top-left-radius:3px;padding:10px 13px;font-size:12.5px;line-height:1.65}
+.tc-bubble strong{color:var(--a);font-weight:600}
+.tc-bubble code{background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:3px;padding:1px 5px;font-family:var(--fm);font-size:11px;color:var(--i)}
+.tc-bubble ul{padding-left:14px;margin:4px 0}
+/* Analysis result blocks inside popup */
+.tc-section{display:flex;flex-direction:column;gap:6px}
+.tc-sec-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tm)}
+.tc-level{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;align-self:flex-start}
+.tc-chips{display:flex;flex-wrap:wrap;gap:4px}
+.tc-chip{background:var(--bg-h);border:1px solid var(--b);border-radius:4px;padding:3px 8px;font-size:10.5px;font-family:var(--fm)}
+.tc-recs{display:flex;flex-direction:column;gap:4px}
+.tc-rec{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:var(--ag);border:1px solid rgba(0,212,160,.1);border-radius:var(--r6);font-size:12px;line-height:1.5}
+.tc-rem-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}
+.tc-rem-btn{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--b);background:var(--bg-c);border-radius:var(--r6);cursor:pointer;font-size:11px;color:var(--ts);font-family:var(--ff);transition:all var(--tr);text-align:left}
+.tc-rem-btn:hover{border-color:var(--a);color:var(--a);background:var(--ad)}
+/* Typing indicator */
+.tc-typing{display:flex;gap:4px;align-items:center;padding:10px 13px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);border-top-left-radius:3px;width:fit-content}
+.td{width:5px;height:5px;border-radius:50%;background:var(--tm);animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);background:var(--tm)}30%{transform:translateY(-5px);background:var(--a)}}
+.tc-footer{display:flex;align-items:center;gap:7px;padding:10px 14px;border-top:1px solid var(--b);flex-shrink:0}
+.tc-reanalyze{display:flex;align-items:center;gap:6px;padding:7px 14px;background:linear-gradient(135deg,var(--a),var(--a2));border:none;border-radius:20px;cursor:pointer;font-size:11px;font-weight:700;color:var(--bg);font-family:var(--ff);transition:opacity var(--tr)}
+.tc-reanalyze:hover{opacity:.88}
+.tc-reanalyze:disabled{opacity:.45;cursor:not-allowed}
+.tc-sn-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--bg-c);border:1px solid var(--b);border-radius:20px;cursor:pointer;font-size:11px;color:var(--ts);font-family:var(--ff);transition:all var(--tr)}
+.tc-sn-btn:hover{color:var(--t);border-color:var(--bm)}
+
+/* ── SPIN ── */
+.spin{width:14px;height:14px;border:2px solid var(--b);border-top-color:var(--a);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+.spin-w{width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── CHAT TAB ── */
+.chat-msgs{flex:1;overflow-y:auto;padding:22px 28px;display:flex;flex-direction:column;gap:14px}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:36px;text-align:center}
+.w-orb{width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,var(--bg-c),var(--bg-h));border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.w-live{position:absolute;top:-4px;right:-4px;width:11px;height:11px;border-radius:50%;background:var(--a);border:2px solid var(--bg);box-shadow:0 0 7px var(--a)}
+.w-title{font-size:18px;font-weight:800;background:linear-gradient(90deg,var(--t),var(--ts));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.w-sub{font-size:12.5px;color:var(--ts);max-width:420px;line-height:1.7}
+.w-tags{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.wtag{font-size:10px;font-family:var(--fm);color:var(--ts);background:var(--bg-c);border:1px solid var(--b);border-radius:20px;padding:3px 9px}
+.quick-acts{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.qb{padding:7px 14px;border-radius:20px;border:1px solid var(--b);background:var(--bg-c);color:var(--ts);font-size:12px;font-family:var(--ff);cursor:pointer;transition:all var(--tr)}
+.qb:hover{border-color:var(--a);color:var(--a);background:var(--ad)}
+.msg{display:flex;gap:8px;animation:fu .2s ease}
+.msg.u{flex-direction:row-reverse}
+.av{width:27px;height:27px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;align-self:flex-end}
+.msg.a .av{background:linear-gradient(135deg,var(--a),var(--a2))}
+.msg.u .av{background:var(--bg-c);border:1px solid var(--b)}
+.mb{max-width:72%;display:flex;flex-direction:column;gap:3px}
+.msg.u .mb{align-items:flex-end}
+.bub{padding:9px 13px;border-radius:var(--r10);font-size:13px;line-height:1.67}
+.msg.a .bub{background:var(--bg-c);border:1px solid var(--b);border-bottom-left-radius:3px}
+.msg.u .bub{background:var(--ad);border:1px solid rgba(0,212,160,.2);border-bottom-right-radius:3px}
+.bub strong{color:var(--a);font-weight:600}
+.bub code{background:rgba(255,255,255,.06);border:1px solid var(--b);border-radius:3px;padding:1px 5px;font-family:var(--fm);font-size:11.5px;color:var(--i)}
+.bub pre{background:var(--bg);border:1px solid var(--b);border-radius:var(--r6);padding:9px 12px;overflow-x:auto;margin:6px 0;font-size:11px;font-family:var(--fm)}
+.bub ul{padding-left:16px;margin:5px 0}
+.mts{font-size:9.5px;color:var(--tm);font-family:var(--fm);padding:0 3px}
+.typing2{display:flex;gap:4px;align-items:center;padding:10px 13px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);border-bottom-left-radius:3px;width:fit-content}
+.chat-bar{padding:12px 18px;border-top:1px solid var(--b);background:var(--bg-s);display:flex;gap:8px;align-items:flex-end}
+.ci-wrap{flex:1;background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r10);display:flex;align-items:center;gap:8px;padding:8px 12px;transition:border-color var(--tr)}
+.ci-wrap:focus-within{border-color:var(--ba);box-shadow:0 0 0 3px var(--ag)}
+.ci{flex:1;background:none;border:none;outline:none;color:var(--t);font-family:var(--ff);font-size:13px;resize:none;max-height:90px;min-height:20px;line-height:1.5}
+.ci::placeholder{color:var(--tm)}
+.send{width:33px;height:33px;background:var(--a);border:none;border-radius:var(--r6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--bg);font-size:14px;transition:all var(--tr)}
+.send:hover{background:#00eab2;transform:scale(1.05)}
+.send:disabled{background:var(--tm);cursor:not-allowed;transform:none}
+.chat-ft{text-align:center;font-size:9.5px;color:var(--tm);font-family:var(--fm);padding:5px;border-top:1px solid var(--b)}
+.agent-step{display:flex;align-items:center;gap:8px;padding:7px 13px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);border-bottom-left-radius:3px;font-size:12px;color:var(--ts);font-family:var(--fm);width:fit-content;max-width:90%}
+.agent-step .sp-dot{width:8px;height:8px;border-radius:50%;background:var(--a);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.agent-step .sp-txt{color:var(--t);font-size:12px}
+.approval-card{background:var(--bg-c);border:1px solid var(--w);border-radius:12px;padding:14px 16px;max-width:92%;font-size:13px;line-height:1.6}
+.approval-card .ac-title{font-weight:600;color:var(--w);font-size:12px;letter-spacing:.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.approval-card .ac-plan{background:var(--bg);border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-family:var(--fm);font-size:11.5px;color:var(--ts);margin:8px 0;white-space:pre-wrap;max-height:160px;overflow-y:auto}
+.approval-card .ac-btns{display:flex;gap:8px;margin-top:10px}
+.ac-approve{flex:1;padding:7px 0;background:var(--a);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.ac-approve:hover{background:#00eab2}
+.ac-dismiss{flex:1;padding:7px 0;background:transparent;color:var(--tm);border:1px solid var(--b);border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s}
+.ac-dismiss:hover{border-color:var(--r);color:var(--r)}
+.result-card{background:var(--bg-c);border:1px solid rgba(0,212,160,.25);border-radius:12px;padding:12px 16px;max-width:92%;font-size:13px}
+.result-card .rc-title{font-weight:600;color:var(--a);font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tool-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:var(--bg);border:1px solid var(--b);border-radius:20px;font-size:10.5px;font-family:var(--fm);color:var(--ts);margin:2px 3px;transition:all .3s}
+.tool-chip.running{border-color:var(--a);color:var(--a)}
+.tool-chip.done{border-color:rgba(0,212,160,.3);color:var(--ts)}
+.tool-chip.error{border-color:var(--r);color:var(--r)}
+.tool-chip .tc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tool-chip.running .tc-dot{background:var(--a);animation:pulse 1s infinite}
+.tool-chip.done .tc-dot{background:rgba(0,212,160,.5)}
+.tool-chip.error .tc-dot{background:var(--r)}
+.tool-chips-row{display:flex;flex-wrap:wrap;padding:4px 0;max-width:92%}
+
+/* ── METRIC CARDS (only in Processes tab) ── */
+.mc-row{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b);flex-shrink:0}
+.mc{padding:11px 15px;border-right:1px solid var(--b);display:flex;flex-direction:column;gap:5px;min-height:84px}
+.mc:last-child{border-right:none}
+.mc-head{display:flex;align-items:center;justify-content:space-between}
+.mc-lbl{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts)}
+.mc-ico{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px}
+.mi-c{background:rgba(56,189,248,.12);color:var(--i)}.mi-m{background:rgba(109,112,255,.12);color:var(--a2)}
+.mi-d{background:rgba(245,158,11,.12);color:var(--w)}.mi-n{background:rgba(0,212,160,.12);color:var(--a)}
+.spark{width:60px;height:22px}
+.mc-val{font-family:var(--fm);font-size:20px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.mc-u{font-size:10px;color:var(--ts)}
+.mc-d{font-size:9.5px;font-family:var(--fm)}
+.du{color:var(--r)}.dd{color:var(--a)}.df{color:var(--tm)}
+
+/* ── PROCESS TABLE ── */
+.proc-wrap{flex:1;overflow-y:auto;padding:0 18px 12px}
+.ptbl{width:100%;border-collapse:collapse;table-layout:fixed}
+.ptbl th{position:sticky;top:0;padding:6px 9px;text-align:left;font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts);background:var(--bg);border-bottom:1px solid var(--b);cursor:pointer;user-select:none;white-space:nowrap}
+.ptbl th:hover{color:var(--t)}
+.ptbl td{padding:5px 9px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.025);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ptbl tr:hover td{background:rgba(255,255,255,.02)}
+.cbar-w{display:flex;align-items:center;gap:6px}
+.cbar-t{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;min-width:40px}
+.cbar-f{height:100%;border-radius:2px;transition:width .5s}
+.cpct{font-family:var(--fm);font-size:10.5px;min-width:34px;text-align:right}
+.spl{display:inline-flex;font-size:10px;padding:2px 7px;border-radius:9px;font-weight:600}
+.sr{background:rgba(0,212,160,.12);color:var(--a)}.ss{background:rgba(245,158,11,.1);color:var(--w)}
+.si2{background:rgba(122,128,148,.1);color:var(--ts)}.sd{background:var(--rd);color:var(--r)}
+.kb{background:none;border:1px solid rgba(239,68,68,.2);color:var(--r);border-radius:var(--r4);padding:2px 7px;font-size:9.5px;cursor:pointer;opacity:0;transition:all var(--tr);font-family:var(--ff)}
+.ptbl tr:hover .kb{opacity:1}
+.kb:hover{background:var(--rd);border-color:var(--r)}
+.pft{display:flex;align-items:center;gap:12px;padding:6px 18px;border-top:1px solid var(--b);font-size:10.5px;color:var(--ts)}
+.leg{display:flex;align-items:center;gap:4px}.lgd{width:6px;height:6px;border-radius:50%}
+
+/* ── APPLICATION ECG TIMELINE ── */
+.tl-tb{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--b);flex-shrink:0}
+.tl-sp{flex:1}
+.tl-leg{display:flex;align-items:center;gap:12px;font-size:9.5px;color:var(--ts)}
+.tl-li{display:flex;align-items:center;gap:5px}
+.tl-ll{width:20px;height:2px;border-radius:2px}
+.tl-ll-f{background:var(--tm)}.tl-ll-e{background:var(--a);box-shadow:0 0 4px var(--a)}.tl-ll-w{background:var(--w);box-shadow:0 0 4px var(--w)}
+.now-badge{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--fm);color:var(--ts);background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:4px 9px}
+.ndot{width:6px;height:6px;border-radius:50%;background:var(--a);box-shadow:0 0 5px var(--a);animation:pulse 2s infinite}
+.tl-vp{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.tl-ax{display:flex;height:26px;border-bottom:1px solid var(--b);flex-shrink:0}
+.tl-axl{width:202px;min-width:202px;border-right:1px solid var(--b);display:flex;align-items:center;padding:0 12px}
+.tl-axt{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tm)}
+.tl-axc{flex:1;overflow:hidden}
+.tl-sc{flex:1;overflow-y:auto;overflow-x:hidden}
+.tl-grp{display:flex;flex-direction:column}
+.tl-gh{display:flex;height:28px;border-bottom:1px solid var(--b);cursor:pointer;transition:background var(--tr);flex-shrink:0;background:var(--bg);position:sticky;top:0;z-index:4}
+.tl-gh:hover{background:var(--bg-h)}
+.tl-glc{width:202px;min-width:202px;border-right:1px solid var(--b);display:flex;align-items:center;padding:0 10px;gap:7px}
+.tl-gc{font-size:8px;color:var(--tm);transition:transform var(--tr)}.tl-gc.op{transform:rotate(90deg)}
+.tl-gnm{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ts)}
+.tl-gcnt{font-size:9px;font-family:var(--fm);color:var(--tm);background:var(--bg-c);border:1px solid var(--b);border-radius:9px;padding:1px 6px}
+.tl-gcc{flex:1}
+.tl-row{display:flex;align-items:center;height:38px;border-bottom:1px solid rgba(255,255,255,.025)}
+.tl-row:hover{background:rgba(255,255,255,.022)}
+.tl-rl{width:202px;min-width:202px;border-right:1px solid var(--b);display:flex;align-items:center;padding:0 12px;gap:8px;overflow:hidden}
+.tl-ric{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:800}
+.tl-rn{font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.tl-rp{font-size:9.5px;font-family:var(--fm);color:var(--ts);white-space:nowrap}
+.tl-rc{flex:1;height:38px;display:block;cursor:crosshair}
+.tltip{position:fixed;background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r10);padding:10px 13px;pointer-events:none;z-index:999;display:none;min-width:180px;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+.tltip.on{display:block}
+.tlt-nm{font-weight:700;margin-bottom:4px;font-size:12px}
+.tlt-r{display:flex;justify-content:space-between;gap:14px;padding:2px 0;font-size:11px;color:var(--ts)}
+.tlt-v{color:var(--t);font-family:var(--fm)}
+/* App insights footer */
+.ac-ft{border-top:1px solid var(--b);padding:9px 18px;flex-shrink:0;display:flex;gap:9px;overflow-x:auto}
+.ac{min-width:172px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:9px 12px;flex-shrink:0;transition:all var(--tr)}
+.ac:hover{border-color:var(--bm);background:var(--bg-h)}
+.ac-h{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.ac-ico{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:800}
+.ac-nm{font-size:11.5px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hsp{font-size:9.5px;font-family:var(--fm);border-radius:4px;padding:2px 6px;font-weight:700;flex-shrink:0}
+.hs-ok{background:rgba(0,212,160,.15);color:var(--a)}.hs-w{background:rgba(245,158,11,.15);color:var(--w)}.hs-b{background:rgba(239,68,68,.15);color:var(--r)}
+.ac-rows{display:flex;flex-direction:column;gap:3px}
+.ac-row{display:flex;justify-content:space-between;font-size:11px}
+.ac-rl{color:var(--tm);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.ac-rv{font-family:var(--fm);font-weight:600}
+.beh{font-size:9.5px;padding:2px 7px;border-radius:4px;font-weight:600;display:inline-block;margin-top:4px}
+.beh-n{background:var(--ad);color:var(--a)}.beh-e{background:var(--wd);color:var(--w)}
+.beh-h{background:var(--rd);color:var(--r)}.beh-b{background:rgba(255,255,255,.04);color:var(--tm)}
+
+/* ── BATTERY (domain-focused, no system metrics) ── */
+.bat-content{flex:1;overflow-y:auto;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-content:start}
+.bc{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r16);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.bc.wide{grid-column:span 2}.bc.full{grid-column:1/-1}
+.bc-title{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ts)}
+.bc-big{font-size:30px;font-family:var(--fm);font-weight:700;line-height:1}
+.bc-big span{font-size:13px;color:var(--ts);font-weight:400}
+.bbar{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.bbar-f{height:100%;border-radius:4px;transition:width .8s}
+.brow{display:flex;align-items:center;gap:7px;font-size:12px}
+.brd{width:7px;height:7px;border-radius:50%;animation:pulse 2s infinite}
+.bl{display:flex;flex-direction:column;gap:5px}
+.bli{display:flex;align-items:center;gap:8px;padding:6px 9px;background:var(--bg-h);border-radius:var(--r6)}
+.bli-nm{font-size:11.5px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bli-v{font-size:10.5px;font-family:var(--fm);color:var(--ts)}
+.bsug{display:flex;flex-direction:column;gap:5px}
+.bsug-i{display:flex;gap:8px;padding:7px 10px;background:var(--ag);border:1px solid rgba(0,212,160,.1);border-radius:var(--r6);font-size:12px;line-height:1.5}
+/* Battery health indicators */
+.bat-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.bstat{background:var(--bg-h);border:1px solid var(--b);border-radius:var(--r6);padding:8px 10px}
+.bstat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--tm);margin-bottom:3px}
+.bstat-val{font-size:14px;font-family:var(--fm);font-weight:700}
+.bstat-sub{font-size:10px;color:var(--ts);margin-top:2px}
+
+/* ── SECURITY (domain-focused) ── */
+.sec-layout{display:grid;grid-template-columns:248px 1fr;flex:1;overflow:hidden}
+.sec-left{border-right:1px solid var(--b);overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:11px}
+.sec-right{overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:10px}
+.sec-score-card{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r16);padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.sec-ring{width:78px;height:78px;border-radius:50%;border:5px solid var(--b);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:2px auto}
+.sec-ring-s{font-size:22px;font-family:var(--fm);font-weight:700;line-height:1}
+.sec-ring-l{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+.cc{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:9px 12px;display:flex;align-items:center;gap:9px;transition:all var(--tr)}
+.cc:hover{background:var(--bg-h)}
+.cc-ic{font-size:18px;flex-shrink:0}
+.cc-body{flex:1;min-width:0}
+.cc-t{font-size:12px;font-weight:700;margin-bottom:2px}
+.cc-d{font-size:11px;color:var(--ts);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-s{flex-shrink:0;padding:3px 8px;border-radius:var(--r6);font-size:10px;font-weight:700}
+.cs-ok{background:rgba(0,212,160,.15);color:var(--a);border:1px solid rgba(0,212,160,.2)}
+.cs-bad{background:rgba(239,68,68,.15);color:var(--r);border:1px solid rgba(239,68,68,.2)}
+.cs-w{background:rgba(245,158,11,.15);color:var(--w);border:1px solid rgba(245,158,11,.2)}
+.cs-uk{background:rgba(122,128,148,.1);color:var(--ts);border:1px solid var(--b)}
+.sec-sect{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts);margin-bottom:4px}
+.sec-item{display:flex;gap:9px;padding:8px 10px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);margin-bottom:5px;transition:all var(--tr)}
+.sec-item:hover{background:var(--bg-h);border-color:var(--bm)}
+.si-ic{font-size:13px;flex-shrink:0;margin-top:1px}
+.si-b{flex:1}
+.si-nm{font-size:12px;font-weight:600;margin-bottom:2px}
+.si-det{font-size:11px;color:var(--ts);line-height:1.4}
+.rbadge{padding:2px 7px;border-radius:4px;font-size:9.5px;font-weight:700}
+.rb-c{background:var(--rd);color:var(--r)}.rb-w{background:var(--wd);color:var(--w)}
+.sec-recs-box{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:11px 13px}
+
+/* ── ALERTS PANEL ── */
+.alerts-layout{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.alerts-stats{display:flex;gap:10px;padding:11px 18px;border-bottom:1px solid var(--b);flex-shrink:0}
+.astat{flex:1;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:9px 12px;display:flex;flex-direction:column;gap:2px;text-align:center}
+.astat-val{font-size:22px;font-family:var(--fm);font-weight:700;line-height:1}
+.astat-lbl{font-size:10px;color:var(--ts);font-weight:600;letter-spacing:.04em}
+.alerts-filter{display:flex;align-items:center;gap:8px;padding:7px 18px;border-bottom:1px solid var(--b);flex-shrink:0}
+.afilter-btn{padding:4px 12px;border-radius:var(--r6);border:1px solid var(--b);background:var(--bg-c);color:var(--ts);font-size:11px;font-family:var(--ff);cursor:pointer;transition:all var(--tr)}
+.afilter-btn.on{background:var(--ad);color:var(--a);border-color:rgba(0,212,160,.3)}
+.afilter-btn:hover:not(.on){color:var(--t);background:var(--bg-h)}
+.alerts-scroll{flex:1;overflow-y:auto;padding:0 18px 14px}
+.alert-item{display:flex;gap:10px;padding:11px 13px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);margin-top:8px;transition:all var(--tr)}
+.alert-item:hover{background:var(--bg-h);border-color:var(--bm)}
+.alert-item.crit{border-left:3px solid var(--r)}
+.alert-item.warn{border-left:3px solid var(--w)}
+.alert-item.info{border-left:3px solid var(--i)}
+.ai-sev{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:42px}
+.ai-sev-ic{font-size:18px}
+.ai-sev-lbl{font-size:9px;font-weight:700;letter-spacing:.04em}
+.ai-body{flex:1;min-width:0}
+.ai-meta{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.ai-type{font-size:11px;font-weight:700;background:var(--bg-h);border:1px solid var(--b);border-radius:4px;padding:1px 7px;font-family:var(--fm)}
+.ai-src{font-size:11px;color:var(--a);font-weight:600}
+.ai-ts{font-size:10px;color:var(--tm);font-family:var(--fm);margin-left:auto}
+.ai-msg{font-size:12.5px;line-height:1.5;margin-bottom:4px}
+.ai-diag{font-size:11px;color:var(--ts);line-height:1.4;font-style:italic}
+.ai-actions{display:flex;gap:6px;margin-top:5px}
+.ai-act-btn{padding:3px 10px;border:1px solid var(--b);background:var(--bg-h);color:var(--ts);border-radius:var(--r4);font-size:10.5px;cursor:pointer;transition:all var(--tr);font-family:var(--ff)}
+.ai-act-btn:hover{color:var(--a);border-color:rgba(0,212,160,.3)}
+
+/* ── EVENT ANALYSIS ── */
+/* ── EVENT ANALYSIS — single-panel rich insights ── */
+.evt-scroll{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.euc-summary{background:linear-gradient(135deg,rgba(0,212,160,.08),rgba(109,112,255,.06));border:1px solid rgba(0,212,160,.2);border-radius:var(--r16);padding:16px 18px;display:flex;flex-direction:column;gap:7px}
+.euc-sum-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.euc-sum-ic{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.euc-sum-title{font-size:13px;font-weight:800;letter-spacing:-.01em}
+.euc-sum-body{font-size:13px;line-height:1.7;color:var(--ts)}
+.euc-health-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:3px}
+.euc-badge{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700}
+.euc-badge.crit{background:var(--rd);color:var(--r);border:1px solid rgba(239,68,68,.25)}
+.euc-badge.warn{background:var(--wd);color:var(--w);border:1px solid rgba(245,158,11,.25)}
+.euc-badge.ok{background:var(--ad);color:var(--a);border:1px solid rgba(0,212,160,.25)}
+.euc-badge.info{background:var(--id);color:var(--i);border:1px solid rgba(56,189,248,.25)}
+.euc-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.euc-card{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:13px 15px;display:flex;flex-direction:column;gap:8px;transition:all var(--tr)}
+.euc-card:hover{background:var(--bg-h);border-color:var(--bm)}
+.euc-card.full{grid-column:1/-1}
+.euc-card.accent-r{border-left:3px solid var(--r)}
+.euc-card.accent-w{border-left:3px solid var(--w)}
+.euc-card.accent-a{border-left:3px solid var(--a)}
+.euc-card.accent-i{border-left:3px solid var(--i)}
+.euc-card.accent-p{border-left:3px solid var(--p,#a855f7)}
+.euc-card-head{display:flex;align-items:center;gap:8px}
+.euc-card-ic{font-size:15px;flex-shrink:0}
+.euc-card-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ts);flex:1}
+.euc-conf{font-size:10px;font-family:var(--fm);color:var(--a);font-weight:700}
+.euc-card-body{font-size:12.5px;line-height:1.68;color:var(--t)}
+.euc-card-body strong{color:var(--a);font-weight:600}
+.euc-list{display:flex;flex-direction:column;gap:5px}
+.euc-li{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--bg-h);border-radius:var(--r6);font-size:12px;line-height:1.5}
+.euc-li.crit{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12)}
+.euc-li.warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.12)}
+.euc-li.ok{background:var(--ag);border:1px solid rgba(0,212,160,.12)}
+.euc-li-ic{font-size:13px;flex-shrink:0;margin-top:1px}
+.euc-li-body{flex:1}
+.euc-li-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.euc-li-det{font-size:11px;color:var(--ts);line-height:1.4}
+.euc-rems{display:flex;flex-direction:column;gap:5px}
+.euc-rem{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:var(--r6);font-size:12px;line-height:1.55}
+.euc-rem.auto{background:rgba(0,212,160,.07);border:1px solid rgba(0,212,160,.15)}
+.euc-rem.guided{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.15)}
+.euc-rem.itact{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15)}
+.euc-rem-tag{font-size:9px;font-weight:800;letter-spacing:.05em;padding:2px 6px;border-radius:3px;flex-shrink:0;align-self:flex-start;margin-top:2px}
+.euc-rem-tag.auto{background:rgba(0,212,160,.2);color:var(--a)}
+.euc-rem-tag.guided{background:rgba(56,189,248,.2);color:var(--i)}
+.euc-rem-tag.itact{background:rgba(245,158,11,.2);color:var(--w)}
+.euc-timeline{display:flex;flex-direction:column;gap:0}
+.euc-tl-item{display:flex;gap:12px;padding:8px 0;position:relative}
+.euc-tl-item:not(:last-child)::after{content:'';position:absolute;left:11px;top:28px;bottom:-4px;width:1px;background:var(--b)}
+.euc-tl-dot{width:23px;height:23px;border-radius:50%;border:2px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;background:var(--bg-c)}
+.euc-tl-dot.crit{border-color:var(--r);background:var(--rd)}.euc-tl-dot.warn{border-color:var(--w);background:var(--wd)}.euc-tl-dot.ok{border-color:var(--a);background:var(--ad)}
+.euc-tl-body{flex:1;padding-top:2px}
+.euc-tl-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.euc-tl-det{font-size:11px;color:var(--ts);line-height:1.4}
+.euc-tl-ts{font-size:10px;font-family:var(--fm);color:var(--tm)}
+.euc-conf-bar{height:7px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:5px}
+.euc-conf-bar-f{height:100%;border-radius:3px;transition:width 1s ease}
+.euc-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--tm);padding:48px;text-align:center}
+.ec{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:12px 14px;margin-bottom:10px;display:flex;flex-direction:column;gap:7px}
+.ec-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts)}
+.ec-lvl{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;align-self:flex-start}
+.ec-text{font-size:13px;line-height:1.65}
+.ec-chips{display:flex;flex-wrap:wrap;gap:4px}
+.ec-chip{background:var(--bg-h);border:1px solid var(--b);border-radius:4px;padding:3px 8px;font-size:10.5px;font-family:var(--fm)}
+.ec-recs{display:flex;flex-direction:column;gap:4px}
+.ec-rec{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;background:var(--ag);border:1px solid rgba(0,212,160,.1);border-radius:var(--r6);font-size:12px;line-height:1.5}
+
+/* ── INLINE SERVICENOW PANEL ── */
+.sn-panel{position:absolute;inset:0;background:var(--bg-m);z-index:200;display:flex;flex-direction:column;overflow:hidden;animation:sp-in .2s cubic-bezier(.4,0,.2,1)}
+.sn-panel.hi{display:none}
+@keyframes sp-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.sn-hdr{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--b);flex-shrink:0}
+.sn-hdr-ic{width:34px;height:34px;border-radius:var(--r10);background:linear-gradient(135deg,#7c3aed,#2472c8);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sn-hdr-t{font-size:14px;font-weight:700}
+.sn-hdr-s{font-size:11px;color:var(--ts);margin-top:2px}
+.sn-cls{cursor:pointer;color:var(--ts);font-size:17px;background:none;border:none;transition:color var(--tr);margin-left:auto}
+.sn-cls:hover{color:var(--t)}
+.sn-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px 20px;overflow-y:auto;flex:1}
+.sn-creds{display:flex;flex-direction:column;gap:10px}
+.sn-prev{display:flex;flex-direction:column;gap:7px;overflow-y:auto}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ts)}
+.fi{background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--t);font-size:12.5px;font-family:var(--ff);outline:none;width:100%;transition:border-color var(--tr)}
+.fi:focus{border-color:var(--ba)}
+.fh{font-size:10px;color:var(--tm)}
+.sn-field{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px}
+.sn-fl{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tm);margin-bottom:3px}
+.sn-fv{font-size:11.5px;line-height:1.4;color:var(--ts)}
+.sn-ft{display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid var(--b);background:var(--bg-s)}
+.sn-result{display:none;padding:10px 20px;border-top:1px solid var(--b);font-size:13px;flex-shrink:0}
+.sn-result.on{display:block}
+.snow-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:linear-gradient(135deg,#7c3aed,#2472c8);border:none;border-radius:var(--r6);cursor:pointer;font-size:12px;font-weight:700;color:#fff;font-family:var(--ff);transition:opacity var(--tr)}
+.snow-btn:hover{opacity:.88}
+.snow-btn:disabled{opacity:.45;cursor:not-allowed}
+.btns{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:8px 16px;color:var(--ts);font-size:12px;cursor:pointer;font-family:var(--ff);transition:all var(--tr)}
+.btns:hover{color:var(--t)}
+
+/* ── DIAGNOSIS OVERLAY ── */
+.do{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;animation:fadein .18s ease}
+.do.hi{display:none}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.dc{background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r16);width:min(610px,96vw);max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.7);animation:su .22s cubic-bezier(.34,1.56,.64,1)}
+@keyframes su{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.dh{padding:16px 20px 12px;border-bottom:1px solid var(--b);display:flex;align-items:flex-start;gap:11px}
+.dsic{width:36px;height:36px;border-radius:var(--r10);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sc{background:var(--rd)}.sw{background:var(--wd)}.si3{background:var(--id)}
+.dhtx{flex:1}
+.dh-t{font-size:14px;font-weight:700;margin-bottom:2px}
+.dh-s{font-size:11px;color:var(--ts);font-family:var(--fm)}
+.dx{cursor:pointer;color:var(--tm);font-size:17px;background:none;border:none;transition:color var(--tr)}
+.dx:hover{color:var(--t)}
+.dbody{padding:15px 20px;display:flex;flex-direction:column;gap:12px}
+.ds-lbl{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tm);margin-bottom:4px}
+.dchips{display:flex;gap:7px;flex-wrap:wrap}
+.dchip{display:flex;align-items:center;gap:5px;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:4px 9px;font-family:var(--fm);font-size:11px}
+.dcl{color:var(--ts)}.dcv{color:var(--t);font-weight:600}
+.dai-box{background:var(--bg-c);border:1px solid var(--b);border-left:3px solid var(--a);border-radius:var(--r10);padding:10px 13px;font-size:13px;line-height:1.7}
+.dai-box.ld{display:flex;align-items:center;gap:9px;color:var(--ts)}
+.dact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:5px}
+.dact{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--r6);border:1px solid var(--b);background:var(--bg-c);color:var(--ts);font-size:11px;font-family:var(--ff);cursor:pointer;transition:all var(--tr);text-align:left}
+.dact:hover{border-color:var(--a);color:var(--a);background:var(--ad)}
+.dfoot{padding:11px 20px;border-top:1px solid var(--b);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;align-items:center}
+.dfb{padding:7px 14px;border-radius:var(--r6);border:1px solid var(--b);background:var(--bg-c);color:var(--ts);font-size:12px;font-family:var(--ff);cursor:pointer;transition:all var(--tr)}
+.dfb.pr{background:var(--a);border-color:var(--a);color:var(--bg);font-weight:700}
+.dfb.pr:hover{background:#00eab2}.dfb:hover{color:var(--t)}
+
+/* ── MODALS ── */
+.mbd{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:400;align-items:center;justify-content:center}
+.mbd.op{display:flex}
+.mcard{background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r16);padding:22px;width:440px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mhd{display:flex;justify-content:space-between;align-items:center}
+.mttl{font-size:14px;font-weight:700}
+.mx{cursor:pointer;color:var(--ts);font-size:17px;background:none;border:none;transition:color var(--tr)}
+.mx:hover{color:var(--t)}
+.tbar{display:flex;background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:3px;gap:3px}
+.tbtn{flex:1;padding:6px 9px;border-radius:4px;border:none;background:none;color:var(--ts);font-size:11px;font-family:var(--ff);cursor:pointer;transition:all var(--tr);font-weight:600}
+.tbtn.on{background:var(--ad);color:var(--a)}
+.tbtn:hover:not(.on){color:var(--t);background:rgba(255,255,255,.04)}
+.tpane{display:none;flex-direction:column;gap:12px}.tpane.on{display:flex}
+.ais-card{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r10);padding:11px 13px;display:flex;align-items:center;gap:9px}
+.asd{width:8px;height:8px;border-radius:50%}
+.asd.ok{background:var(--a);box-shadow:0 0 6px var(--a)}.asd.off{background:var(--tm)}
+.asi{flex:1;min-width:0}
+.ast{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ass{font-size:10.5px;color:var(--ts);font-family:var(--fm)}
+.ml{display:flex;flex-direction:column;gap:4px;max-height:148px;overflow-y:auto}
+.mi2{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--b);border-radius:var(--r6);cursor:pointer;transition:all var(--tr);background:var(--bg-c)}
+.mi2:hover{border-color:rgba(0,212,160,.3);background:var(--ad)}
+.mi2.sl{border-color:var(--a);background:var(--ad);color:var(--a)}
+.mtag{font-size:9.5px;font-family:var(--fm);color:var(--ts);background:rgba(255,255,255,.05);border-radius:3px;padding:1px 5px}
+.sh{background:var(--ag);border:1px solid rgba(0,212,160,.1);border-radius:var(--r10);padding:11px 13px}
+.sh-t{font-size:11.5px;font-weight:600;color:var(--a);margin-bottom:6px}
+.sh-b{font-size:11.5px;color:var(--ts);line-height:1.7}
+.sh-b code{background:var(--bg);border:1px solid var(--b);border-radius:3px;padding:1px 6px;font-family:var(--fm);color:var(--a)}
+.btnp{background:var(--a);border:none;border-radius:var(--r6);padding:8px 18px;color:var(--bg);font-weight:700;font-size:12px;cursor:pointer;font-family:var(--ff);transition:background var(--tr)}
+.btnp:hover{background:#00eab2}
+.dv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dv-item{background:var(--bg-c);border:1px solid var(--b);border-radius:var(--r6);padding:9px 11px}
+.dv-item.full{grid-column:1/-1}
+.dv-lbl{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tm);margin-bottom:3px}
+.dv-val{font-size:13px;font-weight:700;font-family:var(--fm)}
+.dv-sub{font-size:10px;color:var(--ts);margin-top:2px}
+
+/* ── TOAST ── */
+.tz{position:fixed;bottom:16px;right:16px;display:flex;flex-direction:column;gap:7px;z-index:999}
+.toast{display:flex;align-items:flex-start;gap:8px;padding:10px 13px;background:var(--bg-m);border:1px solid var(--b);border-radius:var(--r10);min-width:270px;max-width:360px;box-shadow:0 8px 22px rgba(0,0,0,.5);animation:tin .26s ease;font-size:12px}
+.toast.s{border-left:3px solid var(--a)}.toast.warning{border-left:3px solid var(--w)}
+.toast.e{border-left:3px solid var(--r)}.toast.i{border-left:3px solid var(--i)}
+@keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.ti{font-size:14px;flex-shrink:0;margin-top:1px}.tb2{flex:1}.tt{font-weight:700;margin-bottom:1px}.tm2{color:var(--ts);font-size:11px}
+.tx{cursor:pointer;color:var(--tm);font-size:14px}.tx:hover{color:var(--t)}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--tm);padding:34px;text-align:center}
+.ei{font-size:30px;opacity:.44}.et{font-size:13px;font-weight:600;color:var(--ts)}.es{font-size:11.5px;max-width:270px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sb" id="sb">
+  <div class="sb-logo">
+    <div class="lo-ic">🧠</div>
+    <div class="lo-tx"><span class="lo-nm">Cognix</span><span class="lo-sb">EUD AI ASSIST</span></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">Workspace</div>
+    <div class="ni on" id="ni-chat"    onclick="P('chat')">   <span class="ni-ic">💬</span><span class="ni-tx">AI Chat</span></div>
+    <div class="nl">Monitoring</div>
+    <div class="ni"    id="ni-procs"   onclick="P('procs')">  <span class="ni-ic">⚙️</span><span class="ni-tx">Processes</span><span class="nbadge" id="proc-cnt">—</span></div>
+    <div class="ni"    id="ni-apps"    onclick="P('apps')">   <span class="ni-ic">📱</span><span class="ni-tx">Applications</span></div>
+    <div class="ni"    id="ni-battery" onclick="P('battery')"><span class="ni-ic">🔋</span><span class="ni-tx">Battery</span></div>
+    <div class="ni"    id="ni-sec"     onclick="P('sec')">    <span class="ni-ic">🛡️</span><span class="ni-tx">Security</span><span class="nbadge" id="sec-badge">—</span></div>
+    <div class="ni"    id="ni-events"  onclick="P('events')"> <span class="ni-ic">📊</span><span class="ni-tx">Event Analysis</span></div>
+    <div class="nl">Actions</div>
+    <div class="ni" onclick="quickAnalyze()"><span class="ni-ic">🔍</span><span class="ni-tx">Analyze Now</span></div>
+    <div class="ni"    id="ni-alerts"  onclick="P('alerts')"> <span class="ni-ic">🔔</span><span class="ni-tx">Alerts</span><span class="nbadge" id="alert-cnt">0</span></div>
+    <div class="ni"                    onclick="togglePause()"><span class="ni-ic" id="pi">⏸</span><span class="ni-tx" id="pl">Pause</span></div>
+  </nav>
+  <div class="sb-ft">
+    <div class="hbox">
+      <div class="hrow"><div class="hd ok" id="hd"></div><span class="hlb" id="hlb">Initialising</span><span class="hsc" id="hsc">—</span></div>
+      <div class="hbar"><div class="hbar-f" id="hbar" style="width:0;background:var(--a)"></div></div>
+    </div>
+    <div class="col-btn" onclick="toggleSB()"><span id="ca">◀</span><span class="ni-tx" id="cl">Collapse</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="tb">
+    <span class="tb-title" id="pg-t">AI Chat</span>
+    <span class="tb-sub"   id="pg-s"></span>
+    <div class="tb-sp"></div>
+    <div class="ai-wrap">
+      <span class="ai-lbl">AI</span>
+      <div class="ai-dot" id="ai-dot"></div>
+      <div class="ai-btn" onclick="openAI()"><span id="ai-lbl">Configure LLM</span><span class="ch">▾</span></div>
+    </div>
+    <div class="dev-w" onclick="openDev()">
+      <div class="dev-ic">💻</div>
+      <div class="dev-inf"><div class="dev-nm" id="dev-nm">Loading…</div><div class="dev-sp" id="dev-sp">—</div></div>
+    </div>
+    <div class="ic-btn" onclick="P('alerts')">🔔<div class="apip" id="apip"></div></div>
+  </header>
+  <div class="bvio" id="b-vio"><span>⚠</span><span id="b-vio-tx">Violation</span><span style="margin-left:auto;cursor:pointer;opacity:.5" onclick="this.parentElement.classList.remove('on')">✕</span></div>
+
+  <div class="ca" id="ca">
+
+    <!-- ═══ CHAT ═══ -->
+    <div class="pnl on" id="pnl-chat">
+      <div class="chat-msgs" id="cm">
+        <div class="welcome" id="ws">
+          <div class="w-orb">🧠<div class="w-live"></div></div>
+          <div class="w-title">Cognix EUD AI Assist</div>
+          <div class="w-sub">Agentic AI assistant — ask anything about your device. Agents investigate with live tools and suggest fixes. You approve before anything is changed.</div>
+          <div class="w-tags">
+            <div class="wtag">Silent background</div>
+            <div class="wtag">Live tool calls</div>
+            <div class="wtag">Approval gate</div>
+            <div class="wtag">Local-only</div>
+          </div>
+          <div class="quick-acts">
+            <button class="qb" onclick="qs('Is my system healthy right now?')">💚 System Health</button>
+            <button class="qb" onclick="qs('What processes are using the most CPU and memory?')">⚡ Top Processes</button>
+            <button class="qb" onclick="qs('Check my disk space')">💾 Disk Space</button>
+            <button class="qb" onclick="qs('Check my battery status')">🔋 Battery</button>
+            <button class="qb" onclick="qs('Are there any security issues on my device?')">🛡 Security</button>
+            <button class="qb" onclick="qs('Is my network working properly?')">🌐 Network</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-bar">
+        <div class="ci-wrap"><textarea class="ci" id="ci" rows="1" placeholder="Ask about your endpoint…" onkeydown="hk(event)" oninput="ar(this)"></textarea></div>
+        <button class="send" id="send" onclick="sendChat()">➤</button>
+      </div>
+      <div class="chat-ft" id="cf">Cognix EUD AI Assist · Agentic AI · Local-only · v2.3</div>
+    </div>
+
+    <!-- ═══ PROCESSES (metric cards here only) ═══ -->
+    <div class="pnl" id="pnl-procs">
+      <!-- System metrics ONLY in Processes tab -->
+      <div class="mc-row" id="metric-strip">
+        <div class="mc"><div class="mc-head"><div class="mc-lbl"><div class="mc-ico mi-c">⚙</div>CPU</div><canvas class="spark" id="sp-c"></canvas></div><div class="mc-val"><span id="v-cpu">—</span><span class="mc-u"> %</span></div><div class="mc-d df" id="d-cpu">—</div></div>
+        <div class="mc"><div class="mc-head"><div class="mc-lbl"><div class="mc-ico mi-m">▦</div>Memory</div><canvas class="spark" id="sp-m"></canvas></div><div class="mc-val"><span id="v-mem">—</span><span class="mc-u"> %</span></div><div class="mc-d df" id="d-mem">—</div></div>
+        <div class="mc"><div class="mc-head"><div class="mc-lbl"><div class="mc-ico mi-d">◉</div>Disk I/O</div><canvas class="spark" id="sp-d"></canvas></div><div class="mc-val"><span id="v-dsk">—</span><span class="mc-u"> MB/s</span></div><div class="mc-d df" id="d-dsk">—</div></div>
+        <div class="mc"><div class="mc-head"><div class="mc-lbl"><div class="mc-ico mi-n">⬡</div>Network</div><canvas class="spark" id="sp-n"></canvas></div><div class="mc-val"><span id="v-net">—</span><span class="mc-u"> Mb/s</span></div><div class="mc-d df" id="d-net">—</div></div>
+      </div>
+      <div class="ptb" style="border-bottom:none">
+        <div class="ptb-grp"><div class="ptb-ic">⚙️</div><div><div class="ptb-t">Process Monitor</div><div class="ptb-s" id="proc-sum">Loading…</div></div></div>
+        <div class="ptb-sp"></div>
+        <div class="srch-w"><span class="srch-ic">🔍</span><input class="srch" id="psrch" type="text" placeholder="Filter…" oninput="filterP()"/></div>
+        <div class="rbtn" onclick="loadP()">↻</div>
+      </div>
+      <div style="height:1px;background:var(--b);flex-shrink:0"></div>
+      <div class="proc-wrap">
+        <table class="ptbl">
+          <colgroup><col style="width:48px"/><col style="width:155px"/><col style="width:116px"/><col style="width:70px"/><col style="width:74px"/><col style="width:72px"/><col style="width:44px"/><col style="width:50px"/></colgroup>
+          <thead><tr><th onclick="sortP('pid')">PID</th><th onclick="sortP('name')">Process</th><th onclick="sortP('cpu')">CPU ↕</th><th onclick="sortP('mem')">Mem ↕</th><th>Status</th><th>User</th><th onclick="sortP('thr')">Thr</th><th>Kill</th></tr></thead>
+          <tbody id="ptbody"></tbody>
+        </table>
+      </div>
+      <div class="pft">
+        <div class="leg"><div class="lgd" style="background:var(--a)"></div><span id="cn">—</span></div>
+        <div class="leg"><div class="lgd" style="background:var(--w)"></div><span id="ce">—</span></div>
+        <div class="leg"><div class="lgd" style="background:var(--r)"></div><span id="cc">—</span></div>
+        <div style="margin-left:auto;font-size:9.5px;font-family:var(--fm);color:var(--tm)">Auto-refresh 10s</div>
+      </div>
+      <!-- FAB for Processes -->
+      <button class="fab" id="fab-procs" onclick="toggleTabChat('procs',this)">
+        🔍<span class="fab-label">Analyze Processes</span>
+      </button>
+      <div class="tab-chat hi" id="tc-procs"></div>
+    </div>
+
+    <!-- ═══ APPLICATIONS (ECG + app insights, NO system metrics) ═══ -->
+    <div class="pnl" id="pnl-apps">
+      <div class="tl-tb">
+        <div class="ptb-grp"><div class="ptb-ic">📱</div><div><div class="ptb-t">Application Timeline</div><div class="ptb-s" id="tl-sub">Behavioral ECG · crashes · hangs · usage trends</div></div></div>
+        <div class="tl-sp"></div>
+        <div class="tl-leg">
+          <div class="tl-li"><div class="tl-ll tl-ll-f"></div><span>Idle</span></div>
+          <div class="tl-li"><div class="tl-ll tl-ll-e"></div><span>Active</span></div>
+          <div class="tl-li"><div class="tl-ll tl-ll-w"></div><span>Anomaly</span></div>
+        </div>
+        <div class="now-badge"><div class="ndot"></div><span id="tl-range">60 min</span></div>
+        <div class="rbtn" onclick="loadApps()">↻</div>
+      </div>
+      <div class="tl-vp">
+        <div class="tl-ax"><div class="tl-axl"><span class="tl-axt">Application</span></div><div class="tl-axc"><canvas id="tl-ax"></canvas></div></div>
+        <div class="tl-sc" id="tl-sc"></div>
+      </div>
+      <div class="ac-ft" id="ac-ft"><div style="display:flex;align-items:center;gap:8px;padding:8px;font-size:12px;color:var(--ts)"><div class="spin"></div>Loading app insights…</div></div>
+      <!-- FAB for Apps -->
+      <button class="fab" id="fab-apps" onclick="toggleTabChat('apps',this)">
+        🔍<span class="fab-label">Analyze Apps</span>
+      </button>
+      <div class="tab-chat hi" id="tc-apps"></div>
+    </div>
+
+    <!-- ═══ BATTERY (domain-focused, NO system metrics) ═══ -->
+    <div class="pnl" id="pnl-battery">
+      <div class="ptb">
+        <div class="ptb-grp"><div class="ptb-ic">🔋</div><div><div class="ptb-t">Battery Insights</div><div class="ptb-s" id="bat-sub">Health · Discharge · Anomalies · Optimization</div></div></div>
+        <div class="ptb-sp"></div>
+        <div class="rbtn" onclick="loadBat()">↻</div>
+      </div>
+      <div id="bat-body" class="bat-content"><div class="empty" style="grid-column:1/-1"><div class="spin"></div><div class="et" style="margin-top:10px">Loading battery data…</div></div></div>
+      <!-- FAB for Battery -->
+      <button class="fab" id="fab-battery" onclick="toggleTabChat('battery',this)">
+        🔍<span class="fab-label">Analyze Battery</span>
+      </button>
+      <div class="tab-chat hi" id="tc-battery"></div>
+    </div>
+
+    <!-- ═══ SECURITY (domain-focused, NO system metrics) ═══ -->
+    <div class="pnl" id="pnl-sec">
+      <div class="ptb">
+        <div class="ptb-grp"><div class="ptb-ic">🛡️</div><div><div class="ptb-t">Security &amp; Compliance</div><div class="ptb-s" id="sec-sub">AV · BitLocker · Firewall · Threats · Vulnerabilities</div></div></div>
+        <div class="ptb-sp"></div>
+        <div class="rbtn" onclick="loadSec()">↻</div>
+      </div>
+      <div id="sec-body"><div class="empty"><div class="spin"></div><div class="et" style="margin-top:10px">Scanning compliance…</div></div></div>
+      <!-- FAB for Security -->
+      <button class="fab" id="fab-security" onclick="toggleTabChat('security',this)">
+        🔍<span class="fab-label">Analyze Security</span>
+      </button>
+      <div class="tab-chat hi" id="tc-security"></div>
+    </div>
+
+    <!-- ═══ ALERTS (1-hour rolling window) ═══ -->
+    <div class="pnl" id="pnl-alerts">
+      <div class="ptb">
+        <div class="ptb-grp"><div class="ptb-ic">🔔</div><div><div class="ptb-t">Alerts</div><div class="ptb-s" id="alerts-sub">Last 1 hour · Rolling window · Real-time</div></div></div>
+        <div class="ptb-sp"></div>
+        <div class="rbtn" onclick="loadAlerts()">↻</div>
+      </div>
+      <div class="alerts-layout">
+        <div class="alerts-stats">
+          <div class="astat"><div class="astat-val" id="al-cnt">—</div><div class="astat-lbl">Total</div></div>
+          <div class="astat"><div class="astat-val" id="al-crit" style="color:var(--r)">—</div><div class="astat-lbl">Critical</div></div>
+          <div class="astat"><div class="astat-val" id="al-warn" style="color:var(--w)">—</div><div class="astat-lbl">Warning</div></div>
+          <div class="astat"><div class="astat-val" id="al-info" style="color:var(--i)">—</div><div class="astat-lbl">Info</div></div>
+          <div class="astat"><div class="astat-val" id="al-ack" style="color:var(--ts)">—</div><div class="astat-lbl">Acknowledged</div></div>
+        </div>
+        <div class="alerts-filter">
+          <span style="font-size:10px;color:var(--ts);font-weight:600">Filter:</span>
+          <button class="afilter-btn on" id="af-all"  onclick="filterAlerts('all')">All</button>
+          <button class="afilter-btn"    id="af-crit" onclick="filterAlerts('critical')">Critical</button>
+          <button class="afilter-btn"    id="af-warn" onclick="filterAlerts('warning')">Warning</button>
+          <button class="afilter-btn"    id="af-open" onclick="filterAlerts('open')">Open</button>
+          <div style="margin-left:auto;font-size:10px;font-family:var(--fm);color:var(--tm)" id="alerts-ts">—</div>
+        </div>
+        <div class="alerts-scroll" id="alerts-scroll"><div class="empty"><div class="spin"></div><div class="et" style="margin-top:8px">Loading alerts…</div></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ EVENT ANALYSIS — single-panel EUC insights ═══ -->
+    <div class="pnl" id="pnl-events">
+      <div class="ptb">
+        <div class="ptb-grp">
+          <div class="ptb-ic">📊</div>
+          <div><div class="ptb-t">Event &amp; Log Analysis</div>
+          <div class="ptb-s" id="evt-sub">Windows Event Log · EUC AI Diagnostics</div></div>
+        </div>
+        <div class="ptb-sp"></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="nbadge" id="evlog-cnt" style="padding:0 8px">—</div>
+          <div class="rbtn" onclick="loadEvents()" title="Refresh event data">↻</div>
+        </div>
+      </div>
+      <!-- Single scrollable insights panel — no split -->
+      <div class="evt-scroll" id="evt-insights">
+        <div class="euc-empty">
+          <div style="font-size:38px">📊</div>
+          <div style="font-size:14px;font-weight:700;color:var(--ts)">EUC AI Diagnostics Engine</div>
+          <div style="font-size:12.5px;max-width:340px;line-height:1.7">Windows Event Log is being read. Click <strong style="color:var(--a)">↻</strong> to refresh, or use the <strong style="color:var(--a)">🔍</strong> button to run AI analysis.</div>
+        </div>
+      </div>
+      <!-- FAB for Events -->
+      <button class="fab" id="fab-events" onclick="toggleTabChat('events',this)">
+        🔍<span class="fab-label">Analyze Logs</span>
+      </button>
+      <div class="tab-chat hi" id="tc-events"></div>
+    </div>
+
+  </div><!-- /ca -->
+
+  <!-- INLINE SERVICENOW PANEL -->
+  <div class="sn-panel hi" id="sn-panel">
+    <div class="sn-hdr">
+      <div class="sn-hdr-ic">🎫</div>
+      <div><div class="sn-hdr-t">Raise ServiceNow Ticket</div><div class="sn-hdr-s" id="sn-hdr-s">Auto-filled from AI analysis</div></div>
+      <button class="sn-cls" onclick="closeSN()">✕</button>
+    </div>
+    <div class="sn-body">
+      <div class="sn-creds">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ts);margin-bottom:4px">Credentials</div>
+        <div class="fg"><label class="fl">Instance URL</label><input class="fi" id="sn-inst" placeholder="https://instance.service-now.com"/><span class="fh">Your ServiceNow instance URL</span></div>
+        <div class="fg"><label class="fl">Username</label><input class="fi" id="sn-user" placeholder="admin"/></div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="sn-pass" placeholder="••••••••"/></div>
+      </div>
+      <div class="sn-prev" id="sn-prev">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ts);margin-bottom:4px">Ticket Preview</div>
+      </div>
+    </div>
+    <div class="sn-result" id="sn-result"></div>
+    <div class="sn-ft">
+      <button class="btns" onclick="closeSN()">Cancel</button>
+      <div style="flex:1"></div>
+      <button class="snow-btn" id="sn-sub" onclick="submitSN()">🎫 Submit Ticket</button>
+    </div>
+  </div>
+</div><!-- /main -->
+
+<!-- DIAGNOSIS OVERLAY (for alert popups) -->
+<div class="do hi" id="d-ov" onclick="closeDOBd(event)">
+  <div class="dc" onclick="event.stopPropagation()">
+    <div class="dh">
+      <div class="dsic sw" id="d-sev-ic">⚠️</div>
+      <div class="dhtx"><div class="dh-t" id="d-title">Issue Detected</div><div class="dh-s" id="d-sub">Analysing…</div></div>
+      <button class="dx" onclick="closeDO()">✕</button>
+    </div>
+    <div class="dbody">
+      <div><div class="ds-lbl">Live Metrics</div><div class="dchips">
+        <div class="dchip"><span class="dcl">CPU</span><span class="dcv" id="dc-cpu">—</span></div>
+        <div class="dchip"><span class="dcl">Mem</span><span class="dcv" id="dc-mem">—</span></div>
+        <div class="dchip"><span class="dcl">Disk</span><span class="dcv" id="dc-dsk">—</span></div>
+        <div class="dchip"><span class="dcl">Latency</span><span class="dcv" id="dc-lat">—</span></div>
+      </div></div>
+      <div><div class="ds-lbl">AI Root Cause</div><div class="dai-box ld" id="d-ai-box"><div class="spin"></div><span>AI is analysing…</span></div></div>
+      <div id="d-proc-sec" style="display:none"><div class="ds-lbl">Top Process</div><div class="dai-box" id="d-proc-box" style="font-family:var(--fm);font-size:11.5px;border-left-color:var(--r)"></div></div>
+      <div><div class="ds-lbl">Recommended Actions</div><div class="dact-grid" id="d-acts"></div></div>
+    </div>
+    <div class="dfoot">
+      <button class="snow-btn" onclick="openSN(null)" style="font-size:11px;padding:7px 13px">🎫 Raise ServiceNow Ticket</button>
+      <div style="flex:1"></div>
+      <button class="dfb" onclick="ackDO()">Acknowledge</button>
+      <button class="dfb" onclick="chatCtx()">Ask AI…</button>
+      <button class="dfb pr" onclick="closeDO()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="tz" id="tz"></div>
+<div class="tltip" id="tltip"><div class="tlt-nm" id="tt-nm">—</div><div class="tlt-r"><span>Time</span><span class="tlt-v" id="tt-t">—</span></div><div class="tlt-r"><span>CPU</span><span class="tlt-v" id="tt-c">—</span></div><div class="tlt-r"><span>Memory</span><span class="tlt-v" id="tt-m">—</span></div><div class="tlt-r"><span>Status</span><span class="tlt-v" id="tt-s">—</span></div></div>
+
+<!-- AI MODAL -->
+<div class="mbd" id="ai-modal" onclick="closeAI(event)">
+  <div class="mcard" onclick="event.stopPropagation()">
+    <div class="mhd"><span class="mttl">🤖 AI Engine</span><button class="mx" onclick="closeAI()">✕</button></div>
+    <div class="ais-card"><div class="asd off" id="m-ai-dot"></div><div class="asi"><div class="ast" id="m-ai-title">No AI configured</div><div class="ass" id="m-ai-sub">Select a provider</div></div></div>
+    <div class="tbar"><button class="tbtn on" id="tab-local" onclick="aiTab('local')">🖥️ Local LLM</button><button class="tbtn" id="tab-claude" onclick="aiTab('claude')">Claude API</button><button class="tbtn" id="tab-openai" onclick="aiTab('openai')">OpenAI API</button><button class="tbtn" id="tab-nvidia" onclick="aiTab('nvidia')">NvidiaAI API</button></div>
+    <div class="tpane on" id="pane-local">
+      <div class="fg"><label class="fl">Installed Models (Ollama)</label><div id="olist" class="ml"><div style="display:flex;align-items:center;gap:8px;padding:9px;font-size:11.5px;color:var(--ts)"><div class="spin"></div>Loading…</div></div></div>
+      <div id="o-offline" style="display:none"><div class="sh"><div class="sh-t">📋 Setup Ollama</div><div class="sh-b">1. Download at <strong>ollama.com</strong><br/>2. <code>ollama pull phi3</code><br/>3. Click Refresh</div></div></div>
+      <div style="display:flex;gap:8px"><button class="btns" onclick="refreshModels()">↻ Refresh</button><button class="btnp" id="apply-local" onclick="applyLocal()" disabled>Connect</button></div>
+    </div>
+    <div class="tpane" id="pane-claude">
+      <div class="fg"><label class="fl">Model</label><select id="c-model" style="background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--t);font-size:12px;font-family:var(--ff);outline:none;width:100%"><option value="claude-haiku-4-5-20251001">Claude Haiku 4.5</option><option value="claude-sonnet-4-5">Claude Sonnet 4.5</option><option value="claude-opus-4-5">Claude Opus 4.5</option></select></div>
+      <div class="fg"><label class="fl">API Key</label><input class="fi" type="password" id="c-key" placeholder="sk-ant-api03-…"/><span class="fh">Memory only — never stored to disk</span></div>
+      <button class="btnp" onclick="applyClaude()">Connect Claude</button>
+    </div>
+    <div class="tpane" id="pane-openai">
+      <div class="fg"><label class="fl">Model</label><select id="o-model" style="background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--t);font-size:12px;font-family:var(--ff);outline:none;width:100%"><option value="gpt-4o-mini">GPT-4o Mini</option><option value="gpt-4o">GPT-4o</option><option value="gpt-4-turbo">GPT-4 Turbo</option><option value="o1-mini">o1-mini</option></select></div>
+      <div class="fg"><label class="fl">API Key</label><input class="fi" type="password" id="o-key" placeholder="sk-proj-…"/><span class="fh">Memory only — never stored to disk</span></div>
+      <button class="btnp" onclick="applyOpenAI()">Connect OpenAI</button>
+    </div>
+    <div class="tpane" id="pane-nvidia">
+      <div class="fg"><label class="fl">Model</label><select id="n-model" style="background:var(--bg-i);border:1px solid var(--b);border-radius:var(--r6);padding:7px 10px;color:var(--t);font-size:12px;font-family:var(--ff);outline:none;width:100%"><option value="nvidia/nemotron-3-super-120b-a12b">nvidia nemotron-3 super 120b-a12b</option><option value="openai/gpt-oss-120b">openai gpt-oss 120b</option><option value="stepfun-ai/step-3.5-flash">stepfun-ai step 3.5 flash</option><option value="mistralai/devstral-2-123b-instruct-2512">mistralai devstral-2 123b instruct-2512</option><option value="meta/llama3-70b-instruct">meta llama3 70b instruct</option></select></div>
+      <div class="fg"><label class="fl">API Key</label><input class="fi" type="password" id="n-key" placeholder="nvapi-…"/><span class="fh">Memory only — never stored to disk</span></div>
+      <button class="btnp" onclick="applyNvidiaAI()">Connect NvidiaAI</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEVICE MODAL -->
+<div class="mbd" id="dev-modal" onclick="closeDev(event)">
+  <div class="mcard" onclick="event.stopPropagation()" style="width:400px">
+    <div class="mhd"><span class="mttl">💻 Device Information</span><button class="mx" onclick="closeDev()">✕</button></div>
+    <div class="dv-grid" id="dv-grid"><div style="display:flex;align-items:center;gap:8px;padding:12px;font-size:12px;color:var(--ts)"><div class="spin"></div>Loading…</div></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const S={
+  ws:null,panel:'chat',chat:[],procs:[],psort:{k:'cpu',d:-1},
+  spark:{c:[],m:[],d:[],n:[]},metrics:{},paused:false,
+  alertCnt:0,vio:0,lastAlertId:null,alertsData:[],alertFilter:'all',
+  aiOk:false,aiProv:'local',aiModel:'',selModel:null,devInfo:null,
+  tlApps:[],diagAlertId:null,diagMetric:null,diagSev:null,
+  lastAnalysis:null,
+  // Per-tab chat state: { messages:[], analyzing:false, lastResult:null }
+  tabChats:{ procs:{msgs:[],busy:false}, apps:{msgs:[],busy:false},
+             battery:{msgs:[],busy:false}, security:{msgs:[],busy:false}, events:{msgs:[],busy:false} }
+};
+const $=id=>document.getElementById(id);
+const ST=(id,v)=>{const e=$(id);if(e)e.textContent=v;};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+
+// ═══ WEBSOCKET ════════════════════════════════════════════════════
+function connectWS(){
+  const ws=new WebSocket(`ws://${location.host}/ws`);S.ws=ws;
+  ws.onmessage=e=>{try{const d=JSON.parse(e.data);
+    if(d.type==='metrics')onMetrics(d);
+    else if(d.type==='agent_proposal'||d.type==='agent_chat_proposal'){
+      // Agent has built a remediation plan — show approval card in chat
+      P('chat');hideWS();
+      showApprovalCard(d.session_id, d.plan_text||d.message||'See plan above.');
+    }
+    else if(d.type==='agent_thinking'){
+      const existing=document.querySelector('.agent-step .sp-txt');
+      if(existing)existing.textContent=d.step||'Calling tools…';
+    }
+    else if(d.type==='tool_call'){
+      // Show/update a tool chip in the current agent step bubble
+      handleToolCallEvent(d.name, d.status, d.summary||'');
+    }
+    else if(d.type==='agent_executing'){
+      // Agent is executing — show live step
+      showAgentStep('Executing remediation…');
+    }
+    else if(d.type==='agent_complete'){
+      // Execution done — show result card
+      showResultCard(d.session_id||'', d.result||'Remediation complete.');
+      toast('s','Done','Remediation completed successfully.');
+    }
+    else if(d.type==='agent_error'){
+      document.querySelectorAll('.agent-step').forEach(el=>{const p=el.closest('.msg');if(p)p.remove();});
+      addMsg('a','⚠ Agent error: '+(d.message||'Unknown error'));
+    }
+    else if(d.type==='agent_proposal_dismissed'){
+      document.querySelectorAll('.agent-step').forEach(el=>{const p=el.closest('.msg');if(p)p.remove();});
+    }
+  }catch(_){}};
+
+  ws.onclose=()=>setTimeout(connectWS,3000);ws.onerror=()=>ws.close();
+  setInterval(()=>ws.readyState===1&&ws.send(JSON.stringify({type:'ping'})),20000);
+}
+function onMetrics(d){
+  S.metrics={cpu:d.cpu||0,mem:d.memory||0,dsk:d.disk||0,lat:d.net_latency||0};
+  // Metric cards only update when visible (Processes tab)
+  upCard('v-cpu','d-cpu','sp-c',d.cpu,S.spark.c,'%','#38bdf8',d.cpu);
+  upCard('v-mem','d-mem','sp-m',d.memory,S.spark.m,'%','#6d70ff',d.memory);
+  const dio=((d.disk_read||0)+(d.disk_write||0)).toFixed(1);
+  upCard('v-dsk','d-dsk','sp-d',dio,S.spark.d,'MB/s','#f59e0b',parseFloat(dio));
+  const net=((d.net_sent||0)+(d.net_recv||0)).toFixed(1);
+  upCard('v-net','d-net','sp-n',net,S.spark.n,'Mb/s','#00d4a0',parseFloat(net));
+  upHealth(d.health_score||0,d.health_label||'Loading');
+  S.paused=!!d.paused;syncPause();
+  S.vio=d.violations||0;
+  $('b-vio').classList.toggle('on',S.vio>0);
+  if(S.vio>0)ST('b-vio-tx',`${S.vio} threshold violation${S.vio>1?'s':''}`);
+  $('apip').classList.toggle('on',S.vio>0);
+  S.alertCnt=(d.alert_summary||{}).total_active||0;
+  const ae=$('alert-cnt');if(ae){ae.textContent=S.alertCnt;ae.className='nbadge'+(S.alertCnt>0?' red':'');}
+  const as=d.active_states||[];
+  const pop=as.find(x=>x.phase==='POPUP_SHOWN'&&x.severity==='critical')||as.find(x=>x.phase==='POPUP_SHOWN');
+  if(pop&&pop.alert_id!==S.lastAlertId){S.lastAlertId=pop.alert_id;openDO(pop.alert_id,pop.metric,pop.severity,pop.message);}
+}
+function upCard(vi,di,si,val,hist,unit,col,raw){
+  ST(vi,val);hist.push(+raw||0);if(hist.length>24)hist.shift();drawSpark(si,hist,col);
+  if(hist.length>=2){const df=hist[hist.length-1]-hist[hist.length-2];const cl=df>0.1?'du':df<-0.1?'dd':'df';const e=$(di);if(e){e.className=`mc-d ${cl}`;e.textContent=`${df>0?'▲':df<0?'▼':'~'} ${df>0?'+':''}${df.toFixed(1)}${unit}`;}}
+}
+function upHealth(s,l){const d=$('hd');if(d)d.className='hd'+(s<40?' d':s<65?' w':' ok');ST('hlb',l);ST('hsc',`${s}/100`);const b=$('hbar');if(b){b.style.width=`${s}%`;b.style.background=s<40?'var(--r)':s<65?'var(--w)':'var(--a)';}}
+function drawSpark(id,data,col){
+  const c=$(id);if(!c||data.length<2)return;const dpr=window.devicePixelRatio||1,w=c.offsetWidth||60,h=c.offsetHeight||22;c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+  const mn=Math.min(...data)*.95,mx=Math.max(...data)*1.05||1,rng=mx-mn||1;const pts=data.map((v,i)=>({x:(i/(data.length-1))*w,y:h-((v-mn)/rng)*h*.82-h*.05}));
+  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,col+'24');g.addColorStop(1,'transparent');ctx.beginPath();ctx.moveTo(pts[0].x,h);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(pts[pts.length-1].x,h);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.lineJoin='round';ctx.stroke();
+}
+
+// ═══ FLOATING TAB-CHAT SYSTEM ═════════════════════════════════════
+const TAB_META = {
+  procs:   {icon:'⚙️',title:'Process Analysis',     color:'#38bdf8'},
+  apps:    {icon:'📱',title:'App Behavior Analysis', color:'#00d4a0'},
+  battery: {icon:'🔋',title:'Battery Analysis',      color:'#f59e0b'},
+  security:{icon:'🛡️',title:'Security Analysis',     color:'#6d70ff'},
+  events:  {icon:'📊',title:'Event Log Analysis',    color:'#a855f7'},
+};
+
+const REM_ACTIONS = {
+  procs:   [{label:'⛔ Kill Top',fn:'killTopP()'},  {label:'🧹 Opt Memory',url:'/api/remediation/optimize-memory'},{label:'⚙ View Detail',fn:"P('procs')"}],
+  apps:    [{label:'⚙ Processes',fn:"P('procs')"}, {label:'🔍 Deep Scan', fn:"quickAnalyze()"}],
+  battery: [{label:'⚙ Processes',fn:"P('procs')"}, {label:'🧹 Memory',   url:'/api/remediation/optimize-memory'}],
+  security:[{label:'🧹 Clear Temp',url:'/api/remediation/clear-temp'}, {label:'🔍 Full Report',fn:"P('sec')"}],
+  events:  [{label:'🗒 View Logs',fn:"P('events')"},{label:'🧹 Temp Files',url:'/api/remediation/clear-temp'}],
+};
+
+function toggleTabChat(tab, fabBtn) {
+  const container = $(`tc-${tab}`);
+  const fab = fabBtn || $(`fab-${tab}`);
+  if (!container) return;
+  const isOpen = !container.classList.contains('hi');
+  if (isOpen) {
+    container.classList.add('hi');
+    fab?.classList.remove('open');
+  } else {
+    // Build/show the popup
+    container.classList.remove('hi');
+    fab?.classList.add('open');
+    if (!S.tabChats[tab]?.msgs?.length) {
+      // First open → auto-run analysis
+      runTabAnalysis(tab, container);
+    } else {
+      renderTabChat(tab, container);
+    }
+  }
+}
+
+async function runTabAnalysis(tab, container) {
+  const ts = S.tabChats[tab];
+  if (!ts || ts.busy) return;
+  ts.busy = true;
+  // Show loading state
+  renderTabChat(tab, container, true);
+  try {
+    const r = await fetch(`/api/analyze/tab/${tab}`, { method:'POST' });
+    const d = await r.json();
+    ts.lastResult = d;
+    ts.msgs = [{ type:'result', data:d, time:fmtTime() }];
+  } catch(e) {
+    ts.msgs = [{ type:'error', text:`Analysis failed: ${e.message}`, time:fmtTime() }];
+  }
+  ts.busy = false;
+  renderTabChat(tab, container);
+}
+
+function renderTabChat(tab, container, loading=false) {
+  const meta = TAB_META[tab] || {icon:'🔍',title:'Analysis',color:'var(--a)'};
+  const ts   = S.tabChats[tab];
+  const rems = REM_ACTIONS[tab] || [];
+
+  let bodyHTML = '';
+  if (loading) {
+    bodyHTML = `<div class="tc-msg"><div class="tc-msg-header"><div class="tc-msg-ic">🧠</div><span class="tc-msg-from">AI Assistant</span><span class="tc-msg-ts">${fmtTime()}</span></div><div class="tc-typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  } else if (ts?.msgs?.length) {
+    ts.msgs.forEach(m => {
+      if (m.type === 'error') {
+        bodyHTML += `<div class="tc-msg"><div class="tc-msg-header"><div class="tc-msg-ic">⚠</div><span class="tc-msg-from">Error</span><span class="tc-msg-ts">${m.time}</span></div><div class="tc-bubble" style="color:var(--r)">${esc(m.text)}</div></div>`;
+      } else if (m.type === 'result') {
+        const d = m.data;
+        const wl = d.warning_level || 'healthy';
+        const wlC = wl==='critical'?'var(--r)':wl==='warning'?'var(--w)':wl==='info'?'var(--i)':'var(--a)';
+        const wlBg = wl==='critical'?'var(--rd)':wl==='warning'?'var(--wd)':wl==='info'?'var(--id)':'var(--ad)';
+        const comps = (d.impacted_components||[]).slice(0,4).map(c=>`<div class="tc-chip">${esc(c)}</div>`).join('');
+        const recs = (d.recommended_actions||[]).slice(0,4).map((a,i)=>
+          `<div class="tc-rec"><span style="flex-shrink:0">${['1️⃣','2️⃣','3️⃣','4️⃣'][i]||'▸'}</span>${esc(a)}</div>`
+        ).join('');
+        const prevs = (d.preventive_suggestions||[]).slice(0,2).map(s=>`<div class="tc-rec">💡 ${esc(s)}</div>`).join('');
+        const remBtns = rems.map(r=>`<button class="tc-rem-btn" onclick="${r.fn||`_remAction('${r.url}')`}">${esc(r.label)}</button>`).join('');
+
+        bodyHTML += `<div class="tc-msg">
+          <div class="tc-msg-header"><div class="tc-msg-ic">🧠</div><span class="tc-msg-from">AI — ${esc(meta.title)}</span><span class="tc-msg-ts">${m.time}</span></div>
+          <div class="tc-bubble">
+            <div class="tc-section" style="margin-bottom:8px">
+              <div class="tc-sec-lbl">Status</div>
+              <div class="tc-level" style="background:${wlBg};color:${wlC}">${wl.toUpperCase()} · ${d.warning_score||0}/100</div>
+              <div style="font-size:11.5px;color:var(--ts);margin-top:5px">${esc(d.summary||'')}</div>
+            </div>
+            <div class="tc-section" style="margin-bottom:8px">
+              <div class="tc-sec-lbl">Root Cause</div>
+              <div style="font-size:12.5px;line-height:1.6">${renderMd(d.root_cause||'—')}</div>
+            </div>
+            ${comps?`<div class="tc-section" style="margin-bottom:8px"><div class="tc-sec-lbl">Impacted</div><div class="tc-chips">${comps}</div></div>`:''}
+            <div class="tc-section" style="margin-bottom:8px">
+              <div class="tc-sec-lbl">Recommended Actions</div>
+              <div class="tc-recs">${recs||'<div class="tc-rec">✓ No immediate actions required</div>'}</div>
+            </div>
+            ${prevs?`<div class="tc-section" style="margin-bottom:8px"><div class="tc-sec-lbl">Prevention</div><div class="tc-recs">${prevs}</div></div>`:''}
+            ${remBtns?`<div class="tc-section"><div class="tc-sec-lbl">Quick Actions</div><div class="tc-rem-grid">${remBtns}</div></div>`:''}
+          </div>
+        </div>`;
+      }
+    });
+  }
+
+  container.innerHTML = `
+    <div class="tc-header">
+      <div class="tc-icon">${meta.icon}</div>
+      <div><div class="tc-title">${esc(meta.title)}</div><div class="tc-sub">Context-aware · This tab only</div></div>
+      <div class="tc-actions">
+        <div class="tc-btn" title="Re-analyze" onclick="reanalyzeTab('${tab}')">↻</div>
+        <div class="tc-btn danger" title="Clear" onclick="clearTabChat('${tab}')">🗑</div>
+        <div class="tc-btn" title="ServiceNow" onclick="openSN(null)">🎫</div>
+        <div class="tc-btn" title="Close" onclick="toggleTabChat('${tab}')">✕</div>
+      </div>
+    </div>
+    <div class="tc-body" id="tcb-${tab}">${bodyHTML || `<div class="empty"><div class="ei">🔍</div><div class="et">No analysis yet</div><div class="es">Click Re-analyze to start.</div></div>`}</div>
+    <div class="tc-footer">
+      <button class="tc-reanalyze" id="tcrb-${tab}" onclick="reanalyzeTab('${tab}')" ${loading?'disabled':''}>
+        ${loading?'<div class="spin-w"></div> Analysing…':'🔍 Re-analyze'}
+      </button>
+      <button class="tc-sn-btn" onclick="openSN(null)">🎫 ServiceNow</button>
+    </div>`;
+  // Scroll to bottom
+  setTimeout(()=>{const tb=$(`tcb-${tab}`);if(tb)tb.scrollTop=tb.scrollHeight;},50);
+}
+
+async function reanalyzeTab(tab) {
+  const container = $(`tc-${tab}`);
+  if (!container || container.classList.contains('hi')) return;
+  S.tabChats[tab] = { msgs:[], busy:false, lastResult:null };
+  await runTabAnalysis(tab, container);
+}
+
+function clearTabChat(tab) {
+  S.tabChats[tab] = { msgs:[], busy:false, lastResult:null };
+  const container = $(`tc-${tab}`);
+  if (container) renderTabChat(tab, container);
+}
+
+async function _remAction(url) {
+  try {
+    const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const d = await r.json();
+    toast(d.success?'s':'e', d.success?'Done':'Failed', d.message||'');
+  } catch(e) { toast('e','Error',String(e)); }
+}
+
+// ═══ CHAT TAB ═════════════════════════════════════════════════════
+// ═══ AGENTIC CHAT ═══════════════════════════════════════════════
+async function sendChat(){
+  const ta=$('ci');const txt=ta.value.trim();if(!txt)return;
+  hideWS();addMsg('u',txt);ta.value='';ar(ta);$('send').disabled=true;
+  S.chat.push({role:'user',content:txt});
+  const sid=showAgentStep('Thinking\u2026');
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:txt,history:S.chat.slice(-10)})});
+    removeStep(sid);
+    const d=await r.json();
+    const rep=d.response||'Could not process.';
+    addMsg('a',rep);S.chat.push({role:'assistant',content:rep});
+  }catch(e){removeStep(sid);addMsg('a','\u26a0 Connection error \u2014 is the backend running?');}
+  finally{$('send').disabled=false;$('ci').focus();}
+}
+function qs(t){$('ci').value=t;sendChat();}
+async function quickAnalyze(){
+  P('chat');hideWS();
+  addMsg('u','\ud83d\udd0d Analyze my system');
+  const sid=showAgentStep('Investigating system\u2026');
+  try{const r=await fetch('/api/analyze',{method:'POST'});const d=await r.json();
+    removeStep(sid);addMsg('a',d.analysis||'System appears healthy.');
+  }catch(e){removeStep(sid);addMsg('a','\u26a0 Analysis failed.');}
+}
+
+// Live agent step bubble — shown while agent is calling tools
+function showAgentStep(text){
+  const c=$('cm'),id='as'+Date.now();
+  const el=document.createElement('div');
+  el.className='msg a';el.id=id;
+  el.innerHTML=`<div class="av">\ud83e\udde0</div><div class="mb"><div class="agent-step"><div class="sp-dot"></div><span class="sp-txt">${esc(text)}</span></div></div>`;
+  c.appendChild(el);c.scrollTop=c.scrollHeight;return id;
+}
+function updateStep(id,text){const el=$(id);if(!el)return;const sp=el.querySelector('.sp-txt');if(sp)sp.textContent=text;$('cm').scrollTop=$('cm').scrollHeight;}
+function removeStep(id){$(id)?.remove();}
+
+// Approval card — when agent proposes a remediation plan
+function showApprovalCard(sessionId,planText){
+  const c=$('cm');
+  const el=document.createElement('div');el.className='msg a';el.id='ap-'+sessionId;
+  el.innerHTML=`<div class="av">\ud83e\udde0</div><div class="mb"><div class="approval-card">
+    <div class="ac-title">\u26a0\ufe0f Remediation Plan — Your approval needed</div>
+    <div class="ac-plan">${esc(planText)}</div>
+    <div class="ac-btns">
+      <button class="ac-approve" onclick="approveProposal('${sessionId}',this)">\u2713 Approve &amp; Execute</button>
+      <button class="ac-dismiss" onclick="dismissProposal('${sessionId}',this)">\u2715 Dismiss</button>
+    </div>
+  </div><div class="mts">${fmtTime()}</div></div>`;
+  c.appendChild(el);c.scrollTop=c.scrollHeight;
+}
+async function approveProposal(sid,btn){
+  btn.disabled=true;btn.textContent='Executing\u2026';
+  const d=btn.parentElement.querySelector('.ac-dismiss');if(d)d.disabled=true;
+  showAgentStep('Executing remediation plan\u2026');
+  try{await fetch(`/api/agents/approve/${sid}`,{method:'POST'});}
+  catch(e){toast('e','Error',String(e));}
+}
+async function dismissProposal(sid,btn){
+  try{await fetch(`/api/agents/dismiss/${sid}`,{method:'POST'});}catch(_){}
+  const card=$('ap-'+sid);
+  if(card){const ac=card.querySelector('.approval-card');
+    if(ac)ac.innerHTML=`<div style="color:var(--tm);font-size:12px;padding:4px 0">\u2715 Dismissed \u2014 no action taken.</div>`;}
+}
+function showResultCard(sessionId,resultText){
+  document.querySelectorAll('.agent-step').forEach(el=>{const p=el.closest('.msg');if(p)p.remove();});
+  const c=$('cm');const el=document.createElement('div');el.className='msg a';
+  el.innerHTML=`<div class="av">\ud83e\udde0</div><div class="mb"><div class="result-card">
+    <div class="rc-title">\u2705 Remediation Complete</div>
+    <div>${renderMd(resultText)}</div>
+  </div><div class="mts">${fmtTime()}</div></div>`;
+  c.appendChild(el);c.scrollTop=c.scrollHeight;
+  $('ap-'+sessionId)?.remove();
+}
+
+function addMsg(role,text){
+  // Guard: if raw JSON leaked through, show a safe fallback
+  let safe=text||'';
+  const trimmed=safe.trim();
+  if((trimmed.startsWith('{')&&trimmed.includes(':'))||(trimmed.startsWith('[{'))){
+    safe='\u26a0 Received unformatted data. Please try asking again.';
+  }
+  const c=$('cm');const el=document.createElement('div');el.className=`msg ${role}`;
+  el.innerHTML=`<div class="av">${role==='a'?'\ud83e\udde0':'\ud83d\udc64'}</div><div class="mb"><div class="bub">${renderMd(safe)}</div><div class="mts">${fmtTime()}</div></div>`;
+  c.appendChild(el);c.scrollTop=c.scrollHeight;
+}
+// ── Tool call chips — shows live tool activity in step bubble ────────────
+const _toolLabels={
+  get_system_metrics:'📊 System metrics',get_top_processes:'⚡ Top processes',
+  get_active_violations:'🔔 Violations',get_battery_status:'🔋 Battery',
+  get_security_status:'🛡 Security',get_metric_trend:'📈 Trend',
+  get_predictions:'🔮 Predictions',get_metric_history:'📉 History',
+  get_system_info:'🖥 Device info',kill_process:'💀 Kill process',
+  clear_temp_files:'🧹 Clear temp',reset_network:'🌐 Reset network',
+  optimize_memory:'🧠 Optimize RAM'
+};
+function handleToolCallEvent(name,status,summary){
+  let stepEl=document.querySelector('.agent-step');
+  if(!stepEl)return;
+  let row=stepEl.querySelector('.tool-chips-row');
+  if(!row){row=document.createElement('div');row.className='tool-chips-row';stepEl.appendChild(row);}
+  const chipId='tc-'+name;
+  let chip=document.getElementById(chipId);
+  if(!chip){
+    chip=document.createElement('div');chip.id=chipId;chip.className='tool-chip running';
+    chip.innerHTML=`<div class="tc-dot"></div><span>${_toolLabels[name]||name}</span>`;
+    row.appendChild(chip);
+  }
+  chip.className=`tool-chip ${status}`;
+  if(summary&&status==='done'){const sp=chip.querySelector('span');if(sp)sp.textContent=(_toolLabels[name]||name)+': '+summary;}
+  $('cm').scrollTop=$('cm').scrollHeight;
+}
+function showTyping(){return showAgentStep('Thinking\u2026');}
+function removeTyping(id){removeStep(id);}
+function hideWS(){const w=$('ws');if(w)w.style.display='none';}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';}
+function renderMd(t){
+  if(!t)return '';
+  let s=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s=s.replace(/```[\w]*\n([\s\S]*?)```/g,'<pre>$1</pre>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/^### (.+)$/gm,'<div style="font-size:12px;font-weight:600;margin:7px 0 3px;color:var(--t)">$1</div>');
+  s=s.replace(/^## (.+)$/gm,'<div style="font-size:13px;font-weight:700;margin:8px 0 4px;color:var(--t)">$1</div>');
+  s=s.replace(/^# (.+)$/gm,'<div style="font-size:14px;font-weight:700;margin:8px 0 5px;color:var(--a)">$1</div>');
+  s=s.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
+  s=s.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  s=s.replace(/(<li>[\s\S]*?<\/li>\n?)+/g,m=>`<ul style="padding-left:16px;margin:5px 0">${m}</ul>`);
+  s=s.replace(/\n/g,'<br/>');
+  return s;
+}
+const PS={k:'cpu',d:-1};
+async function loadP(){
+  try{const r=await fetch('/api/processes');const d=await r.json();
+    S.procs=d.processes||[];const s=d.summary||{};ST('proc-sum',`${s.count||0} active · CPU ${s.total_cpu||0}% · MEM ${s.total_memory_gb||0} GB`);ST('proc-cnt',s.count||0);renderP();}catch(_){}
+}
+function renderP(){
+  const q=($('psrch')?.value||'').toLowerCase();let pr=[...S.procs];
+  if(q)pr=pr.filter(p=>p.name.toLowerCase().includes(q)||String(p.pid).includes(q));
+  pr.sort((a,b)=>{const k=PS.k;const av=k==='cpu'?a.cpu_percent:k==='mem'?a.memory_mb:k==='thr'?a.threads:k==='pid'?a.pid:a.name;const bv=k==='cpu'?b.cpu_percent:k==='mem'?b.memory_mb:k==='thr'?b.threads:k==='pid'?b.pid:b.name;return(typeof av==='string'?av.localeCompare(bv):av-bv)*PS.d;});
+  let n=0,el=0,cr=0;pr.forEach(p=>{if(p.cpu_percent>30)cr++;else if(p.cpu_percent>10)el++;else n++;});
+  ST('cn',`${n} normal`);ST('ce',`${el} elevated`);ST('cc',`${cr} critical`);
+  $('ptbody').innerHTML=pr.map(p=>{const pct=Math.min(100,p.cpu_percent);const bc=p.cpu_percent>30?'var(--r)':p.cpu_percent>15?'var(--w)':p.cpu_percent>5?'#eab308':'var(--a)';const sc=p.status==='running'?'sr':p.status==='sleeping'?'ss':p.status==='idle'?'si2':'sd';const mem=p.memory_mb>=1024?`${(p.memory_mb/1024).toFixed(1)}G`:`${p.memory_mb.toFixed(0)}M`;return`<tr><td style="font-family:var(--fm);font-size:10px;color:var(--tm)">${p.pid}</td><td style="font-weight:500">⚡ ${esc(p.name)}</td><td><div class="cbar-w"><div class="cbar-t"><div class="cbar-f" style="width:${pct}%;background:${bc}"></div></div><span class="cpct" style="color:${bc}">${p.cpu_percent.toFixed(1)}%</span></div></td><td style="font-family:var(--fm);font-size:11px">${mem}</td><td><span class="spl ${sc}">${p.status}</span></td><td style="font-family:var(--fm);font-size:10.5px;color:var(--ts)">${esc(p.username||'')}</td><td style="font-family:var(--fm);font-size:10px;text-align:center">${p.threads}</td><td><button class="kb" onclick="killP(${p.pid},'${esc(p.name)}')">Kill</button></td></tr>`;}).join('');
+}
+function sortP(k){if(PS.k===k)PS.d*=-1;else{PS.k=k;PS.d=-1;}renderP();}
+function filterP(){renderP();}
+async function killP(pid,name){if(!confirm(`Terminate '${name}' (PID ${pid})?`))return;try{const r=await fetch('/api/remediation/kill',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pid,force:false})});const d=await r.json();toast(d.success?'s':'e',d.success?'Killed':'Failed',d.message);if(d.success)setTimeout(loadP,1000);}catch(e){toast('e','Error',String(e));}}
+async function killTopP(){if(!S.procs.length){toast('i','No processes','');return;}await killP(S.procs[0].pid,S.procs[0].name);}
+
+// ═══ ECG APPLICATION TIMELINE ════════════════════════════════════
+const TLC=['#00d4a0','#6d70ff','#38bdf8','#f59e0b','#a855f7','#ef4444','#10b981','#f472b6','#fb923c','#84cc16'];
+async function loadApps(){
+  try{const r=await fetch('/api/apps');const d=await r.json();S.tlApps=d.apps||[];
+    ST('tl-sub',`${S.tlApps.length} apps · behavioral activity · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`);
+    renderTL(d);renderAppCards(d.apps||[]);}
+  catch(e){$('tl-sc').innerHTML=`<div class="empty"><div class="ei">📱</div><div class="et">Could not load</div><div class="es">${esc(String(e))}</div></div>`;}
+}
+function renderTL(data){
+  const sc=$('tl-sc');const apps=data.apps||[];
+  if(!apps.length){sc.innerHTML=`<div class="empty"><div class="ei">📱</div><div class="et">No active applications</div></div>`;return;}
+  drawAxisECG();
+  const active=apps.filter(a=>a.cpu>0.5).slice(0,14);
+  const bg=apps.filter(a=>a.cpu<=0.5&&a.cpu>0).slice(0,6);
+  let html='';
+  if(active.length)html+=grpHTML('Active Applications',active.map((a,i)=>rowHTML({name:a.name,col:TLC[i%TLC.length],pct:`${a.cpu.toFixed(1)}%`,idx:`app-${i}`})),'grp-apps',true);
+  if(bg.length)html+=grpHTML('Background',bg.map((a,i)=>rowHTML({name:a.name,col:TLC[(i+20)%TLC.length],pct:'',idx:`app-${i+20}`})),'grp-bg',false);
+  if(!html)sc.innerHTML=`<div class="empty"><div class="ei">📱</div><div class="et">No measurable activity</div></div>`;
+  else{sc.innerHTML=html;requestAnimationFrame(()=>{active.forEach((a,i)=>drawECG(`app-${i}`,a.history||[],TLC[i%TLC.length]));bg.forEach((a,i)=>drawECG(`app-${i+20}`,a.history||[],TLC[(i+20)%TLC.length]));setupTLTooltips();});}
+}
+function grpHTML(label,rows,id,open){return`<div class="tl-grp" id="${id}"><div class="tl-gh" onclick="toggleGrp('${id}')"><div class="tl-glc"><span class="tl-gc${open?' op':''}" id="chev-${id}">▶</span><span class="tl-gnm">${esc(label)}</span><span class="tl-gcnt">${rows.length}</span></div><div class="tl-gcc"></div></div><div id="rows-${id}" style="${open?'':'display:none'}">${rows.join('')}</div></div>`;}
+function rowHTML({name,col,pct,idx}){return`<div class="tl-row"><div class="tl-rl"><div class="tl-ric" style="background:${col}1a;color:${col}">${name.charAt(0).toUpperCase()}</div><div class="tl-rn" title="${esc(name)}">${esc(name)}</div><div class="tl-rp" id="rpct-${idx}">${pct}</div></div><canvas class="tl-rc" id="ecg-${idx}" data-name="${esc(name)}"></canvas></div>`;}
+function toggleGrp(id){const r=$(`rows-${id}`),ch=$(`chev-${id}`);if(!r)return;const op=r.style.display!=='none';r.style.display=op?'none':'block';ch?.classList.toggle('op',!op);}
+function drawAxisECG(){const canvas=$('tl-ax');if(!canvas)return;const w=canvas.parentElement.offsetWidth,h=26,dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);const now=Date.now(),marks=12;ctx.font=`10px 'JetBrains Mono',monospace`;ctx.textAlign='center';for(let i=0;i<=marks;i++){const x=(i/marks)*w;const t=new Date(now-(marks-i)*5*60000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});ctx.fillStyle='rgba(122,128,148,.5)';ctx.fillText(t,x,14);ctx.strokeStyle='rgba(255,255,255,.035)';ctx.beginPath();ctx.moveTo(x,18);ctx.lineTo(x,26);ctx.stroke();}ctx.fillStyle='#00d4a0';ctx.textAlign='right';ctx.font="bold 9px 'Syne',sans-serif";ctx.fillText('NOW',w-2,14);}
+function drawECG(id,histData,color){
+  const canvas=$(`ecg-${id}`);if(!canvas)return;const parent=canvas.parentElement;const w=Math.max(parent.offsetWidth-202,60);const h=38,dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+  const B=60;let vals=new Array(B).fill(0),acts=new Array(B).fill(false),anoms=new Array(B).fill(false);
+  if(Array.isArray(histData))histData.forEach((s,i)=>{const sl=Math.min(i,B-1);vals[sl]=s.cpu||0;acts[sl]=s.active;anoms[sl]=s.anomaly;});
+  const maxV=Math.max(...vals,1);const cy=h/2;const maxAmp=h*0.38;
+  ctx.strokeStyle='rgba(255,255,255,.022)';ctx.lineWidth=.5;for(let i=0;i<=12;i++){const x=(i/12)*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=.7;ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.stroke();ctx.setLineDash([]);
+  for(let i=0;i<B;i++){if(anoms[i]){ctx.fillStyle='rgba(239,68,68,.18)';ctx.fillRect((i/B)*w,0,w/B+1,h);}}
+  ctx.beginPath();let fp=true,ep=0;
+  for(let i=0;i<B;i++){const x=(i/(B-1))*w;let y;if(!acts[i]){y=cy;ep=0;}else{const inten=Math.min(vals[i]/maxV,1);const amp=maxAmp*Math.max(0.1,inten);const ph=ep%1;if(ph<0.10)y=cy+Math.sin(ph*Math.PI/0.10)*amp*0.20;else if(ph<0.18)y=cy-Math.sin((ph-0.10)*Math.PI/0.08)*amp*0.14;else if(ph<0.28)y=cy-amp*(1-Math.abs((ph-0.23)/0.05));else if(ph<0.38)y=cy+amp*0.32*(1-Math.abs((ph-0.33)/0.05));else if(ph<0.55)y=cy+Math.sin((ph-0.38)*Math.PI/0.17)*amp*0.12;else y=cy;ep+=0.75/B;}if(fp){ctx.moveTo(x,y);fp=false;}else ctx.lineTo(x,y);}
+  ctx.strokeStyle=color;ctx.lineWidth=1.6;ctx.lineJoin='round';ctx.lineCap='round';const anyAct=acts.some(a=>a);ctx.shadowColor=color;ctx.shadowBlur=anyAct?4:0;ctx.stroke();ctx.shadowBlur=0;
+  if(acts[B-1]){ctx.beginPath();ctx.arc(w-3,cy,3,0,Math.PI*2);ctx.fillStyle=anoms[B-1]?'var(--r)':color;ctx.shadowColor=color;ctx.shadowBlur=7;ctx.fill();ctx.shadowBlur=0;}
+}
+function setupTLTooltips(){document.querySelectorAll('.tl-rc').forEach(c=>{c.addEventListener('mousemove',e=>{const rect=c.getBoundingClientRect(),xPct=(e.clientX-rect.left)/rect.width;const slot=Math.min(Math.floor(xPct*60),59);const name=c.dataset.name||'';const app=S.tlApps.find(a=>a.name===name);const hist=app?.history||[];const sample=hist[Math.min(slot,hist.length-1)];const tip=$('tltip');ST('tt-nm',name);if(sample){ST('tt-t',new Date(sample.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));ST('tt-c',`${sample.cpu?.toFixed(1)||0}%`);ST('tt-m',sample.mem>=1024?`${(sample.mem/1024).toFixed(1)} GB`:`${sample.mem?.toFixed(0)||0} MB`);ST('tt-s',sample.anomaly?'⚠ Anomaly':sample.active?'Active':'Idle');}else{ST('tt-t','—');ST('tt-c','—');ST('tt-m','—');ST('tt-s','Idle');}tip.className='tltip on';tip.style.left=(e.clientX+13)+'px';tip.style.top=(e.clientY-10)+'px';});c.addEventListener('mouseleave',()=>$('tltip').className='tltip');});}
+function renderAppCards(apps){
+  const f=$('ac-ft');if(!apps.length){f.innerHTML='<div style="padding:10px;font-size:11px;color:var(--tm)">No active applications</div>';return;}
+  f.innerHTML=apps.slice(0,10).map((a,i)=>{
+    const col=TLC[i%TLC.length];const hcls=a.health_color==='green'?'hs-ok':a.health_color==='orange'?'hs-w':'hs-b';
+    const bcls=a.behavior==='High Load'?'beh-h':a.behavior==='Elevated'?'beh-e':a.behavior==='Background'||a.behavior==='Idle'?'beh-b':'beh-n';
+    const mem=a.mem_mb>=1024?`${(a.mem_mb/1024).toFixed(1)} GB`:`${a.mem_mb.toFixed(0)} MB`;
+    // Show app-specific data only — NO CPU%/system metrics
+    return`<div class="ac"><div class="ac-h"><div class="ac-ico" style="background:${col}1a;color:${col}">${a.name.charAt(0)}</div><div class="ac-nm" title="${esc(a.name)}">${esc(a.name)}</div><div class="hsp ${hcls}">${a.health_score}</div></div><div class="ac-rows"><div class="ac-row"><span class="ac-rl">Behavior</span><span class="ac-rv">${esc(a.behavior)}</span></div><div class="ac-row"><span class="ac-rl">Memory</span><span class="ac-rv">${mem}</span></div><div class="ac-row"><span class="ac-rl">Procs</span><span class="ac-rv">${a.proc_count}</span></div><div class="ac-row"><span class="ac-rl">Health</span><span class="ac-rv">${a.health_score}/100</span></div></div><div class="beh ${bcls}">${esc(a.behavior)}</div></div>`;
+  }).join('');
+}
+
+// ═══ BATTERY (domain-focused, richer details) ══════════════════════
+async function loadBat(){
+  const el=$('bat-body');
+  try{const r=await fetch('/api/battery');const d=await r.json();
+    if(!d.available){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">🔋</div><div class="et">No Battery</div><div class="es">${esc(d.reason||'Desktop system — no battery detected')}</div></div>`;ST('bat-sub','No battery detected');return;}
+    ST('bat-sub',`${d.percent}% · ${d.plugged?'Charging':'On Battery'} · Health ${d.health_label}`);
+    const bc=d.percent>=60?'var(--a)':d.percent>=20?'var(--w)':'var(--r)';
+    const hrs=d.hours_remaining?`${d.hours_remaining}h remaining`:'Plugged in';
+    const chargePct = d.charging_pct_time || 0;
+    const topApps = (d.top_draining_apps||[]);
+    const suggestions = (d.suggestions||[]);
+    el.innerHTML=`
+      <div class="bc"><div class="bc-title">🔋 Level</div><div class="bc-big" style="color:${bc}">${d.percent}<span>%</span></div><div class="bbar"><div class="bbar-f" style="width:${d.percent}%;background:${bc}"></div></div><div class="brow" style="margin-top:4px"><div class="brd" style="background:${bc}"></div><span>${d.plugged?'🔌 Charging':'🔋 Discharging'}</span></div><div style="font-size:11px;color:var(--ts);margin-top:3px">⏱ ${hrs}</div></div>
+      <div class="bc"><div class="bc-title">❤️ Battery Health</div><div class="bc-big" style="color:${bc}">${d.health_score}<span>/100</span></div><div class="bc-title" style="margin-top:4px">${esc(d.health_label)}</div><div style="font-size:11px;color:var(--ts);margin-top:4px">Drain: ${d.drain_rate_per_hr>0?d.drain_rate_per_hr+'%/hr':'Not draining'}</div><div style="font-size:11px;color:var(--ts)">Charge cycles: ${chargePct}% of session</div></div>
+      <div class="bc"><div class="bc-title">📊 Discharge Stats</div><div class="bat-stat-grid"><div class="bstat"><div class="bstat-lbl">Drain Rate</div><div class="bstat-val" style="color:${bc}">${d.drain_rate_per_hr||0}%<span style="font-size:10px;color:var(--ts)">/hr</span></div></div><div class="bstat"><div class="bstat-lbl">Est Runtime</div><div class="bstat-val">${d.hours_remaining||'—'}<span style="font-size:10px;color:var(--ts)"> hr</span></div></div><div class="bstat"><div class="bstat-lbl">Health Score</div><div class="bstat-val">${d.health_score}/100</div></div><div class="bstat"><div class="bstat-lbl">Status</div><div class="bstat-val" style="font-size:12px;color:${d.plugged?'var(--a)':'var(--w)'}">${d.plugged?'Charging':'Battery'}</div></div></div></div>
+      <div class="bc wide"><div class="bc-title">⚡ Top Draining Apps</div><div class="bl">${topApps.length?topApps.map(a=>`<div class="bli"><span>⚙️</span><span class="bli-nm">${esc(a.name)}</span><span class="bli-v">${a.cpu}% CPU</span></div>`).join(''):'<div style="color:var(--tm);font-size:11.5px;padding:4px 0">No significant draining apps detected</div>'}</div></div>
+      <div class="bc full"><div class="bc-title">💡 Optimization Recommendations</div><div class="bsug">${suggestions.length?suggestions.map(s=>`<div class="bsug-i">💡 ${esc(s)}</div>`).join(''):'<div class="bsug-i">✓ Battery usage is optimal</div>'}</div></div>`;
+  }catch(e){el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">⚠</div><div class="et">Failed to load</div><div class="es">${esc(String(e))}</div></div>`;}
+}
+
+// ═══ SECURITY (domain-focused, richer details) ════════════════════
+async function loadSec(){
+  const el=$('sec-body');el.innerHTML=`<div class="empty"><div class="spin"></div><div class="et" style="margin-top:10px">Scanning compliance…</div></div>`;
+  try{const r=await fetch('/api/security');const d=await r.json();
+    const cs=d.compliance_score||0;const rc=d.risk_color||'orange';const bcc=rc==='green'?'var(--a)':rc==='orange'?'var(--w)':'var(--r)';
+    const bcls=rc==='green'?'hs-ok':rc==='orange'?'hs-w':'hs-b';
+    ST('sec-sub',`Compliance: ${cs}/100 · ${d.risk_level}`);
+    const sb=$('sec-badge');if(sb){sb.textContent=cs<50?'!':(d.suspicious_processes?.length||0);sb.className='nbadge'+(cs<50?' red':cs<80?' amb':'');}
+    const cc=(ic,t,det,sl,scls)=>`<div class="cc"><div class="cc-ic">${ic}</div><div class="cc-body"><div class="cc-t">${esc(t)}</div><div class="cc-d" title="${esc(det)}">${esc(det)}</div></div><div class="cc-s ${scls}">${esc(sl)}</div></div>`;
+    const av=d.antivirus||{},bl=d.bitlocker||{},fw=d.firewall||{};
+    el.className='sec-layout';
+    el.innerHTML=`
+      <div class="sec-left">
+        <div class="sec-score-card">
+          <div class="sec-ring" style="border-color:${bcc}"><div class="sec-ring-s" style="color:${bcc}">${cs}</div><div class="sec-ring-l" style="color:${bcc}">/100</div></div>
+          <div class="hsp ${bcls}">${esc(d.risk_level||'Unknown')}</div>
+          <div style="font-size:11px;color:var(--ts)">${esc(d.platform||'')}</div>
+        </div>
+        <div class="sec-sect">Compliance Controls</div>
+        ${cc('🛡','Antivirus',av.details||av.status||'Unknown',av.enabled===true?'Active':av.enabled===false?'DISABLED':'Unknown',av.enabled===true?'cs-ok':av.enabled===false?'cs-bad':'cs-uk')}
+        ${cc('🔒','BitLocker',bl.details||bl.status||'Unknown',bl.enabled===true?'Enabled':bl.enabled===false?'DISABLED':'N/A',bl.enabled===true?'cs-ok':bl.enabled===false?'cs-bad':'cs-w')}
+        ${cc('🧱','Firewall',fw.details||fw.status||'Unknown',fw.enabled===true?'Active':fw.enabled===false?'DISABLED':fw.status||'Unknown',fw.enabled===true?'cs-ok':fw.enabled===false?'cs-bad':'cs-w')}
+        <div class="sec-recs-box" style="margin-top:8px"><div class="sec-sect" style="margin-bottom:5px">💡 Remediation Steps</div>${(d.recommendations||[]).map(rec=>`<div style="font-size:11.5px;padding:5px 0;border-bottom:1px solid var(--b);color:var(--ts);line-height:1.5">${esc(rec)}</div>`).join('')||'<div style="font-size:11.5px;color:var(--a)">✓ All controls compliant</div>'}</div>
+      </div>
+      <div class="sec-right">
+        ${d.issues?.length?`<div style="margin-bottom:10px"><div class="sec-sect">⚠ Active Security Issues (${d.issues.length})</div>${d.issues.map(i=>`<div class="sec-item"><span class="si-ic">⚠</span><div class="si-b"><div class="si-nm">${esc(i)}</div></div></div>`).join('')}</div>`:
+         `<div class="sec-item" style="border-left:3px solid var(--a);margin-bottom:10px"><span class="si-ic">✅</span><div class="si-b"><div class="si-nm" style="color:var(--a)">All Security Controls Compliant</div><div class="si-det">No active security issues detected.</div></div></div>`}
+        <div class="sec-sect">⚠ Suspicious Processes (${d.suspicious_processes?.length||0})</div>
+        ${(d.suspicious_processes||[]).length?d.suspicious_processes.map(p=>`<div class="sec-item"><span class="si-ic">${p.risk==='critical'?'🔴':'🟡'}</span><div class="si-b"><div class="si-nm">${esc(p.name)} <span class="rbadge ${p.risk==='critical'?'rb-c':'rb-w'}">${p.risk}</span></div><div class="si-det">PID ${p.pid} · ${esc(p.reason)}</div>${p.exe?`<div style="font-size:10px;font-family:var(--fm);color:var(--tm);margin-top:2px">${esc(p.exe.substring(0,70))}</div>`:''}</div></div>`).join(''):`<div style="font-size:12px;color:var(--a);padding:5px 0">✓ No suspicious processes</div>`}
+        <div class="sec-sect" style="margin-top:10px">🌐 Network Anomalies (${d.network_anomalies?.length||0})</div>
+        ${(d.network_anomalies||[]).length?d.network_anomalies.map(na=>`<div class="sec-item"><span class="si-ic">🌐</span><div class="si-b"><div class="si-nm">${esc(na.type)} <span class="rbadge rb-w">${na.risk}</span></div><div class="si-det">${esc(na.detail)}</div></div></div>`).join(''):`<div style="font-size:12px;color:var(--a);padding:5px 0">✓ No network anomalies</div>`}
+      </div>`;
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ei">⚠</div><div class="et">Scan failed</div><div class="es">${esc(String(e))}</div></div>`;}
+}
+
+// ═══ ALERTS (1-hour rolling) ══════════════════════════════════════
+async function loadAlerts(){
+  try{const r=await fetch('/api/alerts/recent?hours=1');const d=await r.json();
+    const alerts=d.alerts||[];S.alertsData=alerts;
+    const crit=alerts.filter(a=>a.severity==='critical').length,warn=alerts.filter(a=>a.severity==='warning').length,info=alerts.filter(a=>a.severity==='info').length,ack=alerts.filter(a=>a.acknowledged).length;
+    ST('al-cnt',alerts.length);ST('al-crit',crit);ST('al-warn',warn);ST('al-info',info);ST('al-ack',ack);
+    ST('alerts-sub',`${alerts.length} alerts in last 1 hour · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`);
+    ST('alerts-ts',`Updated ${fmtTime()}`);
+    const ae=$('alert-cnt');if(ae){ae.textContent=crit+warn||alerts.length;ae.className='nbadge'+(crit>0?' red':warn>0?' amb':'');}
+    renderAlerts();
+  }catch(e){$('alerts-scroll').innerHTML=`<div class="empty"><div class="ei">⚠</div><div class="et">Failed</div><div class="es">${esc(String(e))}</div></div>`;}
+}
+function filterAlerts(f){S.alertFilter=f;document.querySelectorAll('.afilter-btn').forEach(b=>b.classList.remove('on'));$(`af-${f}`)?.classList.add('on');if(f==='all')$('af-all')?.classList.add('on');renderAlerts();}
+function renderAlerts(){
+  let alerts=S.alertsData;
+  if(S.alertFilter==='critical')alerts=alerts.filter(a=>a.severity==='critical');
+  else if(S.alertFilter==='warning')alerts=alerts.filter(a=>a.severity==='warning');
+  else if(S.alertFilter==='open')alerts=alerts.filter(a=>!a.acknowledged&&!a.resolved);
+  const scroll=$('alerts-scroll');
+  if(!alerts.length){scroll.innerHTML=`<div class="empty"><div class="ei">✅</div><div class="et">No alerts</div><div class="es">${S.alertFilter==='all'?'No alerts in the last hour.':'No '+S.alertFilter+' alerts.'}</div></div>`;return;}
+  const ic={critical:'🔴',warning:'⚠️',info:'ℹ️'};const cls={critical:'crit',warning:'warn',info:'info'};
+  scroll.innerHTML=alerts.map(a=>`<div class="alert-item ${cls[a.severity]||'info'}${a.resolved?' resolved':''}">
+    <div class="ai-sev"><div class="ai-sev-ic">${ic[a.severity]||'ℹ️'}</div><div class="ai-sev-lbl" style="color:${a.severity==='critical'?'var(--r)':a.severity==='warning'?'var(--w)':'var(--i)'}">${a.severity.toUpperCase()}</div></div>
+    <div class="ai-body"><div class="ai-meta"><div class="ai-type">${esc(a.type||'?')}</div><div class="ai-src">${esc(a.source||'?')}</div><div class="ai-ts">${esc(a.date_fmt||'')}</div></div>
+    <div class="ai-msg">${esc(a.message)}</div>${a.diagnosis?`<div class="ai-diag">AI: ${esc(a.diagnosis)}</div>`:''}
+    <div class="ai-actions">${!a.acknowledged?`<button class="ai-act-btn" onclick="ackAlert('${a.id}')">Acknowledge</button>`:'<span style="font-size:10px;color:var(--a)">✓ Acked</span>'}
+    <button class="ai-act-btn" onclick="S.diagAlertId='${a.id}';S.diagSev='${a.severity}';S.diagMetric='${a.type}';openSN('${a.id}')">🎫 SN Ticket</button></div></div></div>`).join('');
+}
+async function ackAlert(id){try{await fetch(`/api/alerts/${id}/acknowledge`,{method:'POST'});loadAlerts();}catch(e){toast('e','Error',String(e));}}
+
+// ═══ EVENT LOG — EUC AI Diagnostics Engine ═══════════════════════
+async function loadEvents(){
+  const panel = $('evt-insights');
+  if(!panel) return;
+  panel.innerHTML = `<div class="euc-empty"><div class="spin" style="width:22px;height:22px"></div><div style="font-size:13px;font-weight:600;color:var(--ts);margin-top:8px">Reading Windows Event Log…</div></div>`;
+  try {
+    const r = await fetch('/api/events/logs?limit=80');
+    const d = await r.json();
+    const events = d.events || [];
+    ST('evlog-cnt', events.length || 0);
+    ST('evt-sub', `${events.length} events · Windows Event Log · EUC AI Diagnostics`);
+    if (!events.length) {
+      panel.innerHTML = `<div class="euc-summary"><div class="euc-sum-head"><div class="euc-sum-ic">✅</div><div class="euc-sum-title">AI Summary — Device Health: Excellent</div></div><div class="euc-sum-body">No critical errors or warnings found in the Windows Event Log. System is operating normally with no detectable issues across System and Application event channels.</div><div class="euc-health-row"><div class="euc-badge ok">✓ 0 Critical</div><div class="euc-badge ok">✓ 0 Errors</div><div class="euc-badge ok">✓ 0 Warnings</div><div class="euc-badge ok">✓ All Channels Clear</div></div></div>`;
+      return;
+    }
+    renderEUCInsights(events, panel);
+  } catch(e) {
+    panel.innerHTML = `<div class="euc-empty"><div style="font-size:28px">⚠️</div><div style="font-size:13px;font-weight:600;color:var(--r)">Event Log Read Failed</div><div style="font-size:12px;color:var(--ts)">${esc(String(e))}</div></div>`;
+  }
+}
+
+function renderEUCInsights(events, panel) {
+  // ── Classify events ────────────────────────────────────────────
+  const crits = events.filter(e => e.level === 'Critical');
+  const errs  = events.filter(e => e.level === 'Error');
+  const warns  = events.filter(e => e.level === 'Warning');
+  const total  = events.length;
+  const healthStatus = crits.length > 0 ? 'Critical' : errs.length > 0 ? 'Degraded' : warns.length > 5 ? 'Warning' : 'Healthy';
+  const healthColor  = crits.length > 0 ? 'var(--r)' : errs.length > 0 ? '#f97316' : warns.length > 5 ? 'var(--w)' : 'var(--a)';
+
+  // ── Group by source for pattern detection ───────────────────────
+  const bySource = {};
+  events.forEach(e => {
+    const src = e.source || 'Unknown';
+    if (!bySource[src]) bySource[src] = { crit:0, err:0, warn:0, events:[] };
+    if (e.level === 'Critical') bySource[src].crit++;
+    else if (e.level === 'Error') bySource[src].err++;
+    else bySource[src].warn++;
+    bySource[src].events.push(e);
+  });
+  const topSources = Object.entries(bySource)
+    .map(([name, d]) => ({ name, total: d.crit*3 + d.err*2 + d.warn, ...d }))
+    .sort((a,b) => b.total - a.total).slice(0,5);
+
+  // ── Top issues ─────────────────────────────────────────────────
+  const topIssues = [...crits.slice(0,3), ...errs.slice(0,3), ...warns.slice(0,2)].slice(0,6);
+
+  // ── Detect patterns ────────────────────────────────────────────
+  const recurringSource = topSources.find(s => s.total >= 3);
+  const hasMemIssue   = events.some(e => /memory|pagefile|virtual memory/i.test(e.message||''));
+  const hasDiskIssue  = events.some(e => /disk|volume|ntfs|file system/i.test(e.message||''));
+  const hasNetIssue   = events.some(e => /network|dns|dhcp|tcp|winsock/i.test(e.message||''));
+  const hasAppCrash   = events.some(e => /application error|crash|fault|exception/i.test(e.message||''));
+  const hasSecIssue   = events.some(e => /security|audit|logon fail|unauthorized/i.test(e.message||''));
+
+  // ── Confidence score ────────────────────────────────────────────
+  const confBase = Math.min(97, 60 + Math.min(total, 40));
+  const confScore = crits.length > 0 ? confBase : errs.length > 0 ? confBase - 5 : confBase - 12;
+
+  // ── Build remediation actions ────────────────────────────────────
+  const rems = [];
+  if (hasMemIssue) rems.push({ type:'auto', tag:'AUTO-FIX', icon:'🧹', text:'Run memory optimisation — clear standby cache and compress working sets to free physical memory pressure.', prob:'85%' });
+  if (hasDiskIssue) rems.push({ type:'guided', tag:'GUIDED', icon:'💾', text:'Check disk health: open Device Manager → Disk Drives → right-click → Properties → Check for errors. Run <code>chkdsk /f /r</code> if errors found.', prob:'90%' });
+  if (hasAppCrash) rems.push({ type:'guided', tag:'GUIDED', icon:'⚙️', text:'Review crashing application: check vendor for updates, run <code>sfc /scannow</code> to repair system files, consider reinstalling affected application.', prob:'78%' });
+  if (hasNetIssue) rems.push({ type:'auto', tag:'AUTO-FIX', icon:'🌐', text:'Reset network stack: execute <code>netsh winsock reset</code> and <code>ipconfig /flushdns</code> then restart network adapter.', prob:'80%' });
+  if (hasSecIssue) rems.push({ type:'itact', tag:'IT ACTION', icon:'🔒', text:'Escalate to IT Security: repeated authentication failures or audit policy changes detected. Review Security Event Log with Event IDs 4625, 4648, 4720.', prob:'95%' });
+  if (crits.length > 0 || errs.length > 2) rems.push({ type:'itact', tag:'IT ACTION', icon:'🎫', text:'Raise a ServiceNow incident with event log export attached. Priority based on critical count.', prob:'92%' });
+  if (!rems.length) rems.push({ type:'auto', tag:'AUTO-FIX', icon:'✅', text:'No immediate remediation required. Continue monitoring. Re-analyze in 15 minutes if symptoms persist.', prob:'99%' });
+
+  // ── Timeline from latest 5 events ───────────────────────────────
+  const timelineEvents = events.slice(0, 5);
+
+  // ── Render HTML ─────────────────────────────────────────────────
+  const severityBadgeClass = s => s==='Critical'?'crit':s==='Error'?'warn':s==='Warning'?'warn':'info';
+  const cardAccent = healthStatus==='Critical'?'accent-r':healthStatus==='Degraded'?'accent-w':healthStatus==='Warning'?'accent-w':'accent-a';
+
+  panel.innerHTML = `
+
+    <!-- AI Summary -->
+    <div class="euc-summary">
+      <div class="euc-sum-head">
+        <div class="euc-sum-ic">🧠</div>
+        <div>
+          <div class="euc-sum-title">AI Summary — Device Health: <span style="color:${healthColor}">${healthStatus}</span></div>
+          <div style="font-size:9.5px;font-family:var(--fm);color:var(--ts);margin-top:2px">EUC Diagnostics Engine · ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+      </div>
+      <div class="euc-sum-body">${total} event${total!==1?'s':''} analysed across System and Application channels. ${crits.length?`<strong style="color:var(--r)">${crits.length} critical event${crits.length>1?'s':''} require immediate attention.</strong>`:'No critical events found.'} ${errs.length?`${errs.length} error${errs.length>1?'s':''} detected.`:''} ${warns.length?`${warns.length} warning${warns.length>1?'s':''} present.`:''} ${recurringSource?`Recurring activity from <strong>${esc(recurringSource.name)}</strong> (${recurringSource.total} events) indicates a potential systemic issue.`:''}</div>
+      <div class="euc-health-row">
+        ${crits.length?`<div class="euc-badge crit">🔴 ${crits.length} Critical</div>`:'<div class="euc-badge ok">✓ 0 Critical</div>'}
+        ${errs.length?`<div class="euc-badge warn">🟠 ${errs.length} Error${errs.length>1?'s':''}</div>`:'<div class="euc-badge ok">✓ 0 Errors</div>'}
+        ${warns.length?`<div class="euc-badge warn">⚠ ${warns.length} Warning${warns.length>1?'s':''}</div>`:'<div class="euc-badge ok">✓ 0 Warnings</div>'}
+        <div class="euc-badge info">📋 ${total} Total</div>
+      </div>
+    </div>
+
+    <div class="euc-grid">
+
+      <!-- Critical Issues -->
+      <div class="euc-card full ${crits.length||errs.length?'accent-r':'accent-a'}">
+        <div class="euc-card-head"><span class="euc-card-ic">${crits.length||errs.length?'🚨':'✅'}</span><span class="euc-card-title">Critical Issues (${crits.length+errs.length})</span></div>
+        <div class="euc-list">${topIssues.length?topIssues.map(e=>`<div class="euc-li ${severityBadgeClass(e.level)}"><span class="euc-li-ic">${e.level==='Critical'?'🔴':e.level==='Error'?'🟠':'⚠️'}</span><div class="euc-li-body"><div class="euc-li-title">[${esc(e.level)}] ${esc(e.source||'Unknown')} ${e.event_id?`(ID: ${e.event_id})`:''}</div><div class="euc-li-det">${esc((e.message||'').substring(0,140))}${(e.message||'').length>140?'…':''}</div><div class="euc-tl-ts" style="margin-top:3px">${esc(e.time||'')}</div></div></div>`).join(''):'<div class="euc-li ok"><span class="euc-li-ic">✅</span><div class="euc-li-body"><div class="euc-li-title">No critical issues detected</div><div class="euc-li-det">System and Application event channels are clean.</div></div></div>'}</div>
+      </div>
+
+      <!-- Root Cause Analysis -->
+      <div class="euc-card ${cardAccent}">
+        <div class="euc-card-head"><span class="euc-card-ic">🔬</span><span class="euc-card-title">Root Cause Analysis</span><span class="euc-conf">${confScore}% confidence</span></div>
+        <div class="euc-card-body">
+          <strong>Primary Cause:</strong> ${crits.length?`Critical system event from <strong>${esc(crits[0].source||'Unknown')}</strong> — ${esc((crits[0].message||'').substring(0,80))}`:errs.length?`Application-level error in <strong>${esc(errs[0].source||'Unknown')}</strong> affecting system stability`:warns.length>5?`Multiple warnings from ${topSources.length} sources indicate configuration drift or resource pressure`:'Event distribution is within normal operational bounds.'}<br/><br/>
+          <strong>Contributing Factors:</strong> ${[hasMemIssue&&'Memory pressure',hasDiskIssue&&'Disk subsystem events',hasNetIssue&&'Network connectivity anomalies',hasAppCrash&&'Application crashes/faults',hasSecIssue&&'Security audit events'].filter(Boolean).join(', ')||'No significant contributing factors identified.'}<br/><br/>
+          <strong>Supporting Evidence:</strong> ${topSources.slice(0,3).map(s=>`${esc(s.name)} (${s.total} events)`).join(', ')||'Single-source events.'}
+        </div>
+        <div class="euc-conf-bar"><div class="euc-conf-bar-f" style="width:${confScore}%;background:${confScore>85?'var(--a)':confScore>65?'var(--w)':'var(--r)'}"></div></div>
+      </div>
+
+      <!-- Impact Assessment -->
+      <div class="euc-card accent-i">
+        <div class="euc-card-head"><span class="euc-card-ic">📉</span><span class="euc-card-title">Impact Assessment</span></div>
+        <div class="euc-card-body">
+          ${crits.length?`<strong style="color:var(--r)">HIGH IMPACT</strong> — Critical events detected. Immediate user productivity impact possible. ${hasAppCrash?'Application crashes may cause data loss or work interruption.':'System stability at risk.'}`:errs.length?`<strong style="color:#f97316">MEDIUM IMPACT</strong> — Application errors present. ${hasAppCrash?'Crash events suggest affected workflows.':'Performance degradation likely.'} Users may experience slowness or app failures.`:warns.length?`<strong style="color:var(--w)">LOW IMPACT</strong> — Warning-level events only. No immediate productivity impact, but trending toward degradation if unresolved.`:`<strong style="color:var(--a)">NO IMPACT</strong> — All signals nominal. Device is operating optimally.`}
+          <br/><br/>Affected: ${[hasMemIssue&&'Memory-heavy applications',hasDiskIssue&&'File I/O dependent workloads',hasNetIssue&&'Network-dependent applications',hasAppCrash&&'Affected application workflows',hasSecIssue&&'Security policy enforcement'].filter(Boolean).join(', ')||'No specific workloads affected.'}
+        </div>
+      </div>
+
+      <!-- Pattern & Trend Analysis -->
+      <div class="euc-card accent-p">
+        <div class="euc-card-head"><span class="euc-card-ic">📈</span><span class="euc-card-title">Pattern &amp; Trend Analysis</span></div>
+        <div class="euc-card-body">
+          ${recurringSource?`<strong>Recurring Pattern Detected:</strong> <span style="color:var(--w)">${esc(recurringSource.name)}</span> has generated ${recurringSource.total} events (${recurringSource.crit} critical, ${recurringSource.err} errors, ${recurringSource.warn} warnings). This is indicative of an unresolved underlying condition rather than a one-time event.<br/><br/>`:'<strong>No recurring patterns</strong> detected in current event window.<br/><br/>'}
+          Top event sources: ${topSources.map(s=>`<strong>${esc(s.name)}</strong> (${s.total})`).join(', ')||'N/A'}.<br/>
+          ${total>40?'High event volume suggests active system stress. Monitor closely.':total>20?'Moderate event volume — review flagged sources.':'Low event volume — within acceptable thresholds.'}
+        </div>
+      </div>
+
+      <!-- Predictive Insights -->
+      <div class="euc-card accent-w">
+        <div class="euc-card-head"><span class="euc-card-ic">🔮</span><span class="euc-card-title">Predictive Insights</span></div>
+        <div class="euc-list">
+          ${hasMemIssue?`<div class="euc-li warn"><span class="euc-li-ic">⚠️</span><div class="euc-li-body"><div class="euc-li-title">Memory Exhaustion Risk</div><div class="euc-li-det">Current memory-related events may escalate to page file overflow or application termination within 2–4 hours if workload continues.</div></div></div>`:''}
+          ${hasDiskIssue?`<div class="euc-li warn"><span class="euc-li-ic">💾</span><div class="euc-li-body"><div class="euc-li-title">Disk Failure Warning</div><div class="euc-li-det">Disk-related events indicate potential SMART health degradation. Backup critical data immediately.</div></div></div>`:''}
+          ${hasAppCrash?`<div class="euc-li crit"><span class="euc-li-ic">💥</span><div class="euc-li-body"><div class="euc-li-title">Application Stability Declining</div><div class="euc-li-det">Crash frequency may increase. Consider rolling back recent updates or reinstalling affected applications.</div></div></div>`:''}
+          ${!hasMemIssue&&!hasDiskIssue&&!hasAppCrash?`<div class="euc-li ok"><span class="euc-li-ic">✅</span><div class="euc-li-body"><div class="euc-li-title">No imminent failures predicted</div><div class="euc-li-det">Current event patterns do not indicate near-term system degradation. Maintain regular monitoring cadence.</div></div></div>`:''}
+        </div>
+      </div>
+
+      <!-- Recommended Remediation -->
+      <div class="euc-card full accent-a">
+        <div class="euc-card-head"><span class="euc-card-ic">🛠️</span><span class="euc-card-title">Recommended Remediation — ${rems.length} Action${rems.length!==1?'s':''}</span></div>
+        <div class="euc-rems">${rems.map((rem,i)=>`<div class="euc-rem ${rem.type}"><span class="euc-rem-tag ${rem.type}">${rem.tag}</span><div style="flex:1"><strong>${i+1}. ${rem.icon}</strong> ${rem.text.replace(/<code>(.*?)<\/code>/g,'<code style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font-family:var(--fm);font-size:11px;color:var(--a)">$1</code>')}</div><div style="font-size:9.5px;font-family:var(--fm);color:var(--ts);white-space:nowrap;flex-shrink:0">✓ ${rem.prob}</div></div>`).join('')}</div>
+      </div>
+
+      <!-- Issue Timeline -->
+      <div class="euc-card full">
+        <div class="euc-card-head"><span class="euc-card-ic">⏱️</span><span class="euc-card-title">Issue Timeline — Most Recent Events</span></div>
+        <div class="euc-timeline">${timelineEvents.map((e,i)=>{const cls=e.level==='Critical'?'crit':e.level==='Error'?'warn':'ok';const ic=e.level==='Critical'?'🔴':e.level==='Error'?'🟠':'⚠️';return`<div class="euc-tl-item"><div class="euc-tl-dot ${cls}">${ic}</div><div class="euc-tl-body"><div class="euc-tl-title">${esc(e.source||'System')} — ${esc(e.level||'Warning')} ${e.event_id?`(Event ID: ${e.event_id})`:''}</div><div class="euc-tl-det">${esc((e.message||'').substring(0,120))}${(e.message||'').length>120?'…':''}</div><div class="euc-tl-ts">${esc(e.time||'')}</div></div></div>`;}).join('')}</div>
+      </div>
+
+      <!-- Overall Confidence Score -->
+      <div class="euc-card full" style="background:linear-gradient(135deg,rgba(0,212,160,.04),rgba(109,112,255,.04))">
+        <div class="euc-card-head"><span class="euc-card-ic">🎯</span><span class="euc-card-title">Overall Confidence Score</span><span class="euc-conf">${confScore}%</span></div>
+        <div style="font-size:12px;color:var(--ts);margin-bottom:8px">Analysis based on ${total} event${total!==1?'s':''} from System and Application Event Log channels. Confidence reflects data completeness and signal strength.</div>
+        <div class="euc-conf-bar" style="height:10px"><div class="euc-conf-bar-f" style="width:${confScore}%;background:linear-gradient(90deg,${confScore>85?'var(--a)':confScore>65?'var(--w)':'var(--r)'},${confScore>85?'var(--a2)':'var(--w)'})"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;font-family:var(--fm);color:var(--tm);margin-top:4px"><span>0% — No data</span><span>${confScore}%</span><span>100% — Full confidence</span></div>
+      </div>
+
+    </div>`;
+}
+
+// ═══ SERVICENOW — FIXED, with psutil resolved ═════════════════════
+function buildSNPreview(){const d=S.lastAnalysis||{};const m=S.metrics||{};const sev=S.diagSev||'warning';const met=S.diagMetric||'system';const urg=sev==='critical'?1:sev==='warning'?2:3;const hn=($('dev-nm')?.textContent||'Device').replace('Loading…','Device');return[{label:'Short Description',val:`[Cognix EUD] ${sev.toUpperCase()} — ${met.toUpperCase()} on ${hn}`},{label:'Urgency / Priority',val:`${urg} — ${['','Critical','Warning','Low'][urg]}`},{label:'Category',val:'Performance / Endpoint'},{label:'Root Cause',val:(d.root_cause||'Threshold violation').substring(0,250)},{label:'Impacted',val:(d.impacted_components||[met.toUpperCase()]).join(', ')},{label:'Recommended',val:(d.recommended_actions||[]).slice(0,2).join(' | ').substring(0,300)||'Review telemetry'},{label:'Device',val:hn},{label:'CPU',val:`${m.cpu||0}%`},{label:'Memory',val:`${m.mem||0}%`}];}
+function openSN(alertId){if(alertId)S.diagAlertId=alertId;const prev=$('sn-prev');const fields=buildSNPreview();prev.innerHTML=`<div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ts);margin-bottom:4px">Ticket Preview</div>`+fields.map(f=>`<div class="sn-field"><div class="sn-fl">${esc(f.label)}</div><div class="sn-fv">${esc(f.val)}</div></div>`).join('');ST('sn-hdr-s',`Alert: ${S.diagSev||'warning'} — ${S.diagMetric||'system'}`);const r=$('sn-result');r.className='sn-result';r.textContent='';$('sn-panel').classList.remove('hi');}
+function closeSN(){$('sn-panel').classList.add('hi');}
+async function submitSN(){
+  const inst=$('sn-inst').value.trim(),user=$('sn-user').value.trim(),pass=$('sn-pass').value;
+  if(!inst||!user||!pass){toast('warning','Missing Fields','Enter instance URL, username, and password');return;}
+  const btn=$('sn-sub');btn.disabled=true;btn.innerHTML='<div class="spin-w"></div> Submitting…';
+  const result=$('sn-result');result.className='sn-result';
+  try{
+    const r=await fetch('/api/servicenow/ticket',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({instance:inst,username:user,password:pass,alert_id:S.diagAlertId||''})});
+    const d=await r.json();
+    if(d.success){
+      result.className='sn-result on';
+      result.innerHTML=`<span style="color:var(--a)">✅ Ticket created: <strong>${esc(d.number||'—')}</strong>${d.url?` — <a href="${esc(d.url)}" target="_blank" style="color:var(--a);text-decoration:underline">Open in ServiceNow ↗</a>`:''}`;
+      toast('s','Ticket Created',`#${d.number||'—'} raised successfully`);
+      $('sn-pass').value='';
+    }else{
+      result.className='sn-result on';
+      result.innerHTML=`<div style="color:var(--r)">✕ ${esc(d.error||'Unknown error')}</div><div style="font-size:11px;color:var(--ts);margin-top:4px">${esc(d.detail||'Check instance URL, username and password. User must have the itil role.')}</div>`;
+      toast('e','Ticket Failed',d.error||'Unknown error');
+    }
+  }catch(e){
+    result.className='sn-result on';
+    result.innerHTML=`<span style="color:var(--r)">✕ Network error: ${esc(String(e))}</span>`;
+    toast('e','Connection Error',String(e));
+  }finally{btn.disabled=false;btn.innerHTML='🎫 Submit Ticket';}
+}
+
+// ═══ DIAGNOSIS OVERLAY ════════════════════════════════════════════
+async function openDO(alertId,metric,severity,message){
+  S.diagAlertId=alertId;S.diagMetric=metric;S.diagSev=severity||'warning';
+  $('d-ov').classList.remove('hi');
+  const icons={critical:'🔴',warning:'⚠️',info:'ℹ️'};const cls={critical:'sc',warning:'sw',info:'si3'};
+  const ic=$('d-sev-ic');ic.textContent=icons[severity]||'⚠️';ic.className=`dsic ${cls[severity]||'sw'}`;
+  ST('d-title',`${(metric||'System').toUpperCase()} — Issue Detected`);ST('d-sub',message||'Threshold violation');
+  const m=S.metrics;ST('dc-cpu',`${m.cpu||0}%`);ST('dc-mem',`${m.mem||0}%`);ST('dc-dsk',`${m.dsk||0}%`);ST('dc-lat',`${m.lat||0}ms`);
+  const allA=[{id:'kill_top',label:'⛔ Kill Top',fn:()=>killTopP()},{id:'view_procs',label:'⚙ Processes',fn:()=>{closeDO();P('procs');}},{id:'clr_tmp',label:'🗑 Clear Temp',url:'/api/remediation/clear-temp'},{id:'rst_net',label:'🌐 Reset Net',url:'/api/remediation/reset-network'},{id:'opt_mem',label:'🧹 Opt Memory',url:'/api/remediation/optimize-memory'},{id:'full_ai',label:'🔍 Full Analysis',fn:()=>{closeDO();quickAnalyze();}}];
+  const rel={cpu:['kill_top','view_procs','opt_mem','full_ai'],memory:['opt_mem','kill_top','view_procs','full_ai'],disk:['clr_tmp','view_procs','full_ai'],network:['rst_net','full_ai'],gpu:['kill_top','view_procs','full_ai']};const show=rel[metric]||['view_procs','clr_tmp','full_ai'];const acts=allA.filter(a=>show.includes(a.id));
+  $('d-acts').innerHTML=acts.map(a=>`<button class="dact" id="dab-${a.id}" onclick="_da('${a.id}')">${a.label}</button>`).join('');window._dacts={};acts.forEach(a=>window._dacts[a.id]=a);
+  const ab=$('d-ai-box');ab.className='dai-box ld';ab.innerHTML='<div class="spin"></div><span>AI analysing…</span>';$('d-proc-sec').style.display='none';
+  fetch('/api/alerts/chat-opened',{method:'POST'}).catch(()=>{});
+  try{const url=alertId?`/api/alerts/${alertId}/diagnosis`:'/api/analyze';const rr=await fetch(url,{method:alertId?'GET':'POST'});const dd=await rr.json();ab.className='dai-box';ab.innerHTML=renderMd(dd.diagnosis||dd.analysis||'AI unavailable.');if(S.procs.length>0){ST('d-proc-box',`${S.procs[0].name}  PID:${S.procs[0].pid}  ·  CPU:${S.procs[0].cpu_percent}%  ·  RAM:${S.procs[0].memory_mb.toFixed(0)}MB`);$('d-proc-sec').style.display='block';}}catch(_){$('d-ai-box').innerHTML='<em style="color:var(--tm)">AI unavailable</em>';}
+}
+async function _da(id){const a=(window._dacts||{})[id];if(!a)return;const btn=$(`dab-${id}`);if(btn){btn.disabled=true;}try{if(a.fn)a.fn();else if(a.url){const rr=await fetch(a.url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});const dd=await rr.json();toast(dd.success?'s':'e',dd.success?'Done':'Failed',dd.message||'');}}catch(e){toast('e','Error',String(e));}finally{if(btn)btn.disabled=false;}}
+function closeDOBd(e){if(e.target===$('d-ov'))closeDO();}
+function closeDO(){$('d-ov').classList.add('hi');$('d-proc-sec').style.display='none';fetch('/api/alerts/chat-closed',{method:'POST'}).catch(()=>{});}
+function ackDO(){if(S.diagAlertId)fetch(`/api/alerts/${S.diagAlertId}/acknowledge`,{method:'POST'}).catch(()=>{});closeDO();toast('i','Acknowledged','Will re-notify if issue persists.');}
+function chatCtx(){closeDO();P('chat');if(S.diagMetric)qs(`Analyse the ${S.diagMetric} issue in detail and give step-by-step resolution.`);}
+
+// ═══ AI ENGINE SETTINGS ══════════════════════════════════════════
+let _aiTab='local',_selMdl=null;
+function openAI(){$('ai-modal').classList.add('op');refreshAIStat();if(_aiTab==='local')refreshModels();}
+function closeAI(e){if(e&&e.target!==$('ai-modal'))return;$('ai-modal').classList.remove('op');}
+function aiTab(t){_aiTab=t;['local','claude','openai','nvidia'].forEach(x=>{$(`tab-${x}`).classList.toggle('on',x===t);$(`pane-${x}`).classList.toggle('on',x===t);});if(t==='local')refreshModels();}
+async function refreshModels(){const list=$('olist'),off=$('o-offline'),ab=$('apply-local');list.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:9px;font-size:11.5px;color:var(--ts)"><div class="spin"></div>Checking Ollama…</div>';try{const r=await fetch('/api/ai/models/local');const d=await r.json();if(!d.ollama_running){list.innerHTML='';off.style.display='block';ab.disabled=true;return;}off.style.display='none';if(!d.models?.length){list.innerHTML='<div style="padding:9px;color:var(--ts);font-size:11.5px">No models. Run: <code style="color:var(--a)">ollama pull phi3</code></div>';ab.disabled=true;return;}list.innerHTML=d.models.map(m=>{const tag=m.includes('phi')?'Phi':m.includes('llama')?'LLaMA':m.includes('mistral')?'Mistral':m.includes('gemma')?'Gemma':'LLM';const sl=d.current&&d.current.toLowerCase()===m.toLowerCase();if(sl&&!_selMdl)_selMdl=m;return`<div class="mi2${sl?' sl':''}" id="mi2-${esc(m)}" onclick="selMdl('${esc(m)}')"><span>🤖</span><span style="flex:1;font-size:12px;font-weight:600">${esc(m)}</span><span class="mtag">${tag}</span></div>`;}).join('');ab.disabled=!_selMdl&&!d.current;if(!_selMdl&&d.current)_selMdl=d.current;}catch(_){list.innerHTML='<div style="padding:9px;font-size:11.5px;color:var(--r)">⚠ Backend unreachable</div>';}}
+function selMdl(m){_selMdl=m;document.querySelectorAll('.mi2').forEach(e=>e.classList.remove('sl'));$(`mi2-${m}`)?.classList.add('sl');$('apply-local').disabled=false;}
+async function applyLocal(){if(!_selMdl){toast('warning','No model','Click a model first');return;}const btn=$('apply-local');btn.disabled=true;btn.textContent='Connecting…';try{const r=await fetch('/api/ai/set/local',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:_selMdl})});const d=await r.json();if(d.available){toast('s','Connected',`${_selMdl} ready`);S.aiOk=true;S.aiProv='local';S.aiModel=_selMdl;}else toast('warning','Not available',d.message||'');refreshAIStat();upAI();}catch(e){toast('e','Error',String(e));}finally{btn.disabled=false;btn.textContent='Connect';}}
+async function applyClaude(){const key=$('c-key').value.trim(),model=$('c-model').value;if(!key){toast('warning','No key','Enter your API key');return;}const btn=document.querySelector('#pane-claude .btnp');btn.disabled=true;btn.textContent='Connecting…';try{const r=await fetch('/api/ai/set/apikey',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'claude',api_key:key,model})});const d=await r.json();if(d.available){toast('s','Claude Connected',d.message);S.aiOk=true;S.aiProv='claude';S.aiModel=model;$('c-key').value='';}else toast('e','Failed',d.message);refreshAIStat();upAI();}catch(e){toast('e','Error',String(e));}finally{btn.disabled=false;btn.textContent='Connect Claude';}}
+async function applyOpenAI(){const key=$('o-key').value.trim(),model=$('o-model').value;if(!key){toast('warning','No key','Enter your API key');return;}const btn=document.querySelector('#pane-openai .btnp');btn.disabled=true;btn.textContent='Connecting…';try{const r=await fetch('/api/ai/set/apikey',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'openai',api_key:key,model})});const d=await r.json();if(d.available){toast('s','OpenAI Connected',d.message);S.aiOk=true;S.aiProv='openai';S.aiModel=model;$('o-key').value='';}else toast('e','Failed',d.message);refreshAIStat();upAI();}catch(e){toast('e','Error',String(e));}finally{btn.disabled=false;btn.textContent='Connect OpenAI';}}
+async function applyNvidiaAI(){const key=$('n-key').value.trim(),model=$('n-model').value;if(!key){toast('warning','No key','Enter your API key');return;}const btn=document.querySelector('#pane-nvidia .btnp');btn.disabled=true;btn.textContent='Connecting…';try{const r=await fetch('/api/ai/set/apikey',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:'nvidia',api_key:key,model})});const d=await r.json();if(d.available){toast('s','NvidiaAI Connected',d.message);S.aiOk=true;S.aiProv='nvidia';S.aiModel=model;$('n-key').value='';}else toast('e','Failed',d.message);refreshAIStat();upAI();}catch(e){toast('e','Error',String(e));}finally{btn.disabled=false;btn.textContent='Connect NvidiaAI';}}
+async function refreshAIStat(){try{const r=await fetch('/api/ai/status');const d=await r.json();S.aiProv=d.provider;S.aiModel=d.model;S.aiOk=d.available;const dot=$('m-ai-dot');if(d.available){dot.className='asd ok';ST('m-ai-title',`${d.provider.toUpperCase()} — ${d.model}`);ST('m-ai-sub','Connected and ready');}else{dot.className='asd off';ST('m-ai-title','No AI configured');ST('m-ai-sub','Select a provider');}}catch(_){}}
+function upAI(){const dot=$('ai-dot'),lbl=$('ai-lbl');if(!dot||!lbl)return;if(S.aiOk){dot.className='ai-dot ok';const p={local:'Local',claude:'Claude',openai:'OpenAI',nvidia:'NvidiaAI'}[S.aiProv]||S.aiProv;lbl.textContent=`${p}: ${S.aiModel.length>17?S.aiModel.substring(0,15)+'…':S.aiModel}`;}else{dot.className='ai-dot';lbl.textContent='Configure AI';}const f=$('cf');if(f&&S.aiOk){f.textContent=`Cognix EUD AI Assist · ${{local:'Local LLM',claude:'Claude API',openai:'OpenAI API',nvidia:'NvidiaAI API'}[S.aiProv]||S.aiProv} · ${S.aiModel}`;}}
+
+// ═══ DEVICE INFO ══════════════════════════════════════════════════
+async function loadDev(){try{const r=await fetch('/api/device/info');S.devInfo=await r.json();const d=S.devInfo;ST('dev-nm',d.hostname||'Device');ST('dev-sp',`${d.cpu_cores||'?'}C · ${d.total_ram_gb||'?'} GB · ${d.os||''}`);}catch(_){}}
+async function openDev(){$('dev-modal').classList.add('op');if(!S.devInfo)await loadDev();const d=S.devInfo||{};const up=d.uptime_seconds||0;const uh=Math.floor(up/3600),um=Math.floor((up%3600)/60);$('dv-grid').innerHTML=`<div class="dv-item full"><div class="dv-lbl">Hostname</div><div class="dv-val">${esc(d.hostname||'—')}</div><div class="dv-sub">${esc(d.os||'')} ${esc((d.os_version||'').substring(0,48))}</div></div><div class="dv-item"><div class="dv-lbl">Processor</div><div class="dv-val" style="font-size:12px">${esc((d.cpu_name||'CPU').substring(0,26))}</div><div class="dv-sub">${d.cpu_cores||'?'} cores / ${d.cpu_threads||'?'} threads</div></div><div class="dv-item"><div class="dv-lbl">Frequency</div><div class="dv-val">${d.cpu_freq_mhz||'?'}<span style="font-size:10px;color:var(--ts)"> MHz</span></div></div><div class="dv-item"><div class="dv-lbl">Total RAM</div><div class="dv-val">${d.total_ram_gb||'?'}<span style="font-size:10px;color:var(--ts)"> GB</span></div></div><div class="dv-item"><div class="dv-lbl">Uptime</div><div class="dv-val">${uh>0?`${uh}h ${um}m`:up<60?`${up}s`:`${um}m`}</div></div><div class="dv-item full"><div class="dv-lbl">Runtime</div><div class="dv-val" style="font-size:13px">${esc(d.python_version||'—')}</div></div>`;}
+function closeDev(e){if(e&&e.target!==$('dev-modal'))return;$('dev-modal').classList.remove('op');}
+
+// ═══ CONTROLS ═════════════════════════════════════════════════════
+async function togglePause(){const r=await fetch(S.paused?'/api/monitoring/resume':'/api/monitoring/pause',{method:'POST'}).catch(()=>null);if(r){const d=await r.json();S.paused=!!d.paused;syncPause();toast('i',S.paused?'Paused':'Resumed',S.paused?'Monitoring paused':'Collection resumed.');}}
+function syncPause(){ST('pl',S.paused?'Resume':'Pause');ST('pi',S.paused?'▶':'⏸');}
+
+// ═══ PANEL SWITCH ═════════════════════════════════════════════════
+const PM={chat:'AI Chat',procs:'Process Monitor',apps:'Application Timeline',battery:'Battery Insights',sec:'Security & Compliance',alerts:'Alerts',events:'Event Analysis'};
+const PSb={chat:'',procs:'CPU · Memory · Disk · Network · Per-process telemetry',apps:'Behavioral ECG · crashes · hangs · usage trends',battery:'Health · Discharge cycles · Anomalies · Optimization',sec:'AV · BitLocker · Firewall · Threats · Vulnerabilities',alerts:'Last 1 hour · Rolling window',events:'Windows Event Log · AI root cause diagnostics'};
+function P(panel){
+  S.panel=panel;
+  document.querySelectorAll('.pnl').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('on'));
+  $(`pnl-${panel}`)?.classList.add('on');$(`ni-${panel}`)?.classList.add('on');
+  ST('pg-t',PM[panel]||panel);ST('pg-s',PSb[panel]||'');
+  if(panel==='procs')loadP();
+  else if(panel==='apps')loadApps();
+  else if(panel==='battery')loadBat();
+  else if(panel==='sec')loadSec();
+  else if(panel==='alerts')loadAlerts();
+  else if(panel==='events')loadEvents();
+  closeSN();
+  // Close all tab chats when switching
+  document.querySelectorAll('.tab-chat').forEach(tc=>tc.classList.add('hi'));
+  document.querySelectorAll('.fab').forEach(f=>f.classList.remove('open'));
+}
+function toggleSB(){const sb=$('sb');const c=sb.classList.toggle('col');ST('ca',c?'▶':'◀');ST('cl',c?'':'Collapse');}
+
+// ═══ TOAST ════════════════════════════════════════════════════════
+function toast(type,title,message){const icons={s:'✓',warning:'⚠',e:'✕',i:'ℹ'};const el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=`<span class="ti">${icons[type]||'ℹ'}</span><div class="tb2"><div class="tt">${esc(title)}</div><div class="tm2">${esc(message)}</div></div><span class="tx" onclick="this.parentElement.remove()">✕</span>`;$('tz').appendChild(el);setTimeout(()=>el.remove&&el.remove(),7000);}
+
+// ═══ INIT ═════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  connectWS();loadDev();
+  setTimeout(async()=>{try{const r=await fetch('/api/ai/status');const d=await r.json();S.aiProv=d.provider;S.aiModel=d.model;S.aiOk=d.available;upAI();}catch(_){}},2000);
+  setTimeout(async()=>{try{const r=await fetch('/api/metrics');const d=await r.json();if(!d.metrics)return;const m=d.metrics,h=d.health||{};onMetrics({type:'metrics',cpu:m.cpu_percent,memory:m.memory_percent,disk:m.disk_percent,gpu:m.gpu_percent,net_sent:m.network_sent_mbps,net_recv:m.network_recv_mbps,net_latency:m.network_latency_ms,disk_read:m.disk_read_mbps||0,disk_write:m.disk_write_mbps||0,health_score:h.score||0,health_label:h.label||'Loading',violations:(d.violations||[]).length,active_states:d.active_states||[],alert_summary:{},paused:!!d.paused});}catch(_){}},1800);
+  setInterval(()=>{if(S.panel==='procs')loadP();},10000);
+  setInterval(()=>{if(S.panel==='alerts')loadAlerts();},30000);
+  setInterval(()=>{if(S.panel==='apps')drawAxisECG();},60000);
+  setInterval(async()=>{try{const r=await fetch('/api/ai/status');const d=await r.json();S.aiOk=d.available;S.aiModel=d.model;upAI();}catch(_){}},30000);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDO();closeSN();document.querySelectorAll('.mbd.op').forEach(m=>m.classList.remove('op'));document.querySelectorAll('.tab-chat').forEach(tc=>tc.classList.add('hi'));document.querySelectorAll('.fab').forEach(f=>f.classList.remove('open'));}});
+  window.addEventListener('resize',()=>{if(S.panel==='apps')drawAxisECG();});
+});
+</script>
+</body>
+</html>
